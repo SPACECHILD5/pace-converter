@@ -29,13 +29,20 @@ function formatSecondsToPace(seconds) {
 }
 
 // Parses finish time format(hh:mm:ss or mm:ss) into total seconds
+// Returns null if minutes or seconds are out of range (>= 60)
 function parseFinishTimeToSeconds(timeStr) {
     const parts = timeStr.split(':').map(p => parseInt(p, 10));
     if (parts.some(isNaN)) return null;
     if (parts.length === 3) {
-        return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+        const [h, m, s] = parts;
+        if (h < 0 || m < 0 || s < 0 || m >= 60 || s >= 60) return null;
+        return (h * 3600) + (m * 60) + s;
     } else if (parts.length === 2) {
-        return (parts[0] * 60) + parts[1];
+        const [m, s] = parts;
+        // m < 10 guard: prevents mid-typing 3-digit h:mm entries (e.g. "5:30" from "530")
+        // from being parsed as mm:ss. All 3 marathon distances take >= 10 minutes.
+        if (s < 0 || s >= 60 || m < 10) return null;
+        return (m * 60) + s;
     }
     return null;
 }
@@ -68,6 +75,8 @@ function syncFromPace() {
         finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
         finishTimeHalfInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_HALF);
         finishTimeFullInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_FULL);
+    } else {
+        clearInputs(paceInput);
     }
 }
 
@@ -80,13 +89,15 @@ function syncFromSpeed() {
     }
 
     const kmh = parseFloat(kmhStr);
-    if (kmh > 0) {
+    if (kmh > 0 && kmh <= 30) {
         const secPerKm = 3600 / kmh;
         paceInput.value = formatSecondsToPace(secPerKm);
         
         finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
         finishTimeHalfInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_HALF);
         finishTimeFullInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_FULL);
+    } else {
+        clearInputs(speedInput);
     }
 }
 
@@ -108,6 +119,8 @@ function syncFromFinishTime10k() {
         
         finishTimeHalfInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_HALF);
         finishTimeFullInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_FULL);
+    } else {
+        clearInputs(finishTime10kInput);
     }
 }
 
@@ -129,11 +142,13 @@ function syncFromFinishTimeHalf() {
         
         finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
         finishTimeFullInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_FULL);
+    } else {
+        clearInputs(finishTimeHalfInput);
     }
 }
 
 // Logic to update all data from Full Marathon Finish Time  
-function syncFromFull() {
+function syncFromFinishTimeFull() {
     const timeStr = finishTimeFullInput.value.trim();
     if (!timeStr) {
         clearInputs(finishTimeFullInput);
@@ -150,6 +165,8 @@ function syncFromFull() {
         
         finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
         finishTimeHalfInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_HALF);
+    } else {
+        clearInputs(finishTimeFullInput);
     }
 }
 
@@ -173,6 +190,52 @@ function handlePaceInputFormatting(e) {
     e.target.value = val;
 }
 
+// Validates pace on blur — clears field if format is invalid (e.g. 5:60)
+function handlePaceBlur(e) {
+    const val = e.target.value.trim();
+    if (!val) return;
+    if (parsePaceToSeconds(val) === null) {
+        e.target.value = '';
+        clearInputs(paceInput);
+    }
+}
+
+// Formats speed input: auto-insert decimal before last digit at 3 digits, max 1 decimal, cap 30
+function handleSpeedInputFormatting(e) {
+    let val = e.target.value.replace(/[^\d.]/g, '');
+
+    const dotIdx = val.indexOf('.');
+    if (dotIdx === -1) {
+        // No decimal: auto-insert before last digit when 3+ digits (e.g. '123' → '12.3')
+        if (val.length >= 3) {
+            val = val.substring(0, val.length - 1) + '.' + val.substring(val.length - 1);
+        }
+    } else {
+        // Has decimal: limit to 1 decimal digit, remove extra dots
+        const intPart = val.substring(0, dotIdx);
+        const decPart = val.substring(dotIdx + 1).replace(/\./g, '').substring(0, 1);
+        val = intPart + '.' + decPart;
+    }
+
+    // Cap at 30.0
+    const num = parseFloat(val);
+    if (!isNaN(num) && num > 30) {
+        val = '30.0';
+    }
+
+    e.target.value = val;
+}
+
+// Normalizes speed to 1 decimal place on blur (e.g. '5' → '5.0')
+function handleSpeedBlur(e) {
+    const val = e.target.value.trim();
+    if (!val) return;
+    const num = parseFloat(val);
+    if (!isNaN(num) && num > 0) {
+        e.target.value = num.toFixed(1);
+    }
+}
+
 // Format finish time input (auto insert colons for h:mm:ss or mm:ss)
 function handleFinishTimeFormatting(e) {
     let val = e.target.value.replace(/[^\d:]/g, '');
@@ -193,24 +256,87 @@ function handleFinishTimeFormatting(e) {
     e.target.value = val;
 }
 
+// minDigits: 2 for 10K/Half (mm → mm:00), 3 for Full (skip 2-digit inputs)
+function createFinishTimeBlurHandler(minDigits) {
+    return function(e) {
+        const val = e.target.value.trim();
+        if (!val) return;
+
+        const colons = (val.match(/:/g) || []).length;
+        const digits = val.replace(/:/g, '');
+        let newVal = val;
+
+        if (colons === 0 && digits.length === 2 && minDigits <= 2) {
+            newVal = `${digits}:00`;
+        } else if (colons === 1) {
+            newVal = val + ':00';
+        }
+
+        if (newVal !== val) {
+            e.target.value = newVal;
+        }
+
+        // Invalid value (e.g. "1:60:00"): clear the field
+        if (e.target.value && parseFinishTimeToSeconds(e.target.value) === null) {
+            e.target.value = '';
+            clearInputs(e.target);
+            return;
+        }
+
+        if (newVal !== val) {
+            e.target.dispatchEvent(new Event('input'));
+        }
+    };
+}
+
+// Triggers blur (auto-completion + sync) when Enter is pressed
+function handleEnterBlur(e) {
+    if (e.key === 'Enter') {
+        e.target.blur();
+    }
+}
+
+// Clears all fields on focus for a fresh start
+function handleFocus(e) {
+    e.target.value = '';
+    clearInputs(null);
+}
+
+// --- Event Listeners ---
+
+const allInputs = [paceInput, speedInput, finishTime10kInput, finishTimeHalfInput, finishTimeFullInput];
+allInputs.forEach(input => input.addEventListener('focus', handleFocus));
+
 paceInput.addEventListener('input', (e) => {
     handlePaceInputFormatting(e);
     syncFromPace();
 });
+paceInput.addEventListener('blur', handlePaceBlur);
+paceInput.addEventListener('keydown', handleEnterBlur);
 
-speedInput.addEventListener('input', syncFromSpeed);
+speedInput.addEventListener('input', (e) => {
+    handleSpeedInputFormatting(e);
+    syncFromSpeed();
+});
+speedInput.addEventListener('blur', handleSpeedBlur);
 
 finishTime10kInput.addEventListener('input', (e) => {
     handleFinishTimeFormatting(e);
     syncFromFinishTime10k();
 });
+finishTime10kInput.addEventListener('blur', createFinishTimeBlurHandler(2));
+finishTime10kInput.addEventListener('keydown', handleEnterBlur);
 
 finishTimeHalfInput.addEventListener('input', (e) => {
     handleFinishTimeFormatting(e);
     syncFromFinishTimeHalf();
 });
+finishTimeHalfInput.addEventListener('blur', createFinishTimeBlurHandler(2));
+finishTimeHalfInput.addEventListener('keydown', handleEnterBlur);
 
 finishTimeFullInput.addEventListener('input', (e) => {
     handleFinishTimeFormatting(e);
-    syncFromFull();
+    syncFromFinishTimeFull();
 });
+finishTimeFullInput.addEventListener('blur', createFinishTimeBlurHandler(3));
+finishTimeFullInput.addEventListener('keydown', handleEnterBlur);
