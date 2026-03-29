@@ -200,7 +200,7 @@ function handlePaceBlur(e) {
     }
 }
 
-// Formats speed input: auto-insert decimal before last digit at 3 digits, max 1 decimal, cap 30
+// Formats speed input: auto-insert decimal, max 1 decimal, cap 30
 function handleSpeedInputFormatting(e) {
     let val = e.target.value.replace(/[^\d.]/g, '');
 
