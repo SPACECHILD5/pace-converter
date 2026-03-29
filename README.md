@@ -2,3 +2,4 @@
 
  - min/km to km/h, and vice versa
  - predict marathon finish time (10K, half, full)
+- calculate pace and speed based on target time
