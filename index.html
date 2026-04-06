@@ -1,72 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pace Converter | SPACECHILD Running Utility</title>
-    <meta name="description" content="A sleek pace converter for runners. Instantly convert between pace and speed.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <meta name="google-site-verification" content="y_fadyx-KOBMoXqEHN_AWKqlFVjnhGMf3H0nZjqrTZg" />
-    <meta name="naver-site-verification" content="d585712754d0221cdea767c063e114a3bc175960" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pace Converter for Garmin</title>
+    <meta
+      name="description"
+      content="A sleek pace converter for Garmin runners. Instantly convert between pace and speed."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <meta
+      name="google-site-verification"
+      content="y_fadyx-KOBMoXqEHN_AWKqlFVjnhGMf3H0nZjqrTZg"
+    />
+    <meta
+      name="naver-site-verification"
+      content="d585712754d0221cdea767c063e114a3bc175960"
+    />
+  </head>
+  <body>
     <div class="background-animation"></div>
-    
+
     <main class="glass-card">
-        <header>
-            <h1>Pace Converter</h1>
-            <p>Convert your running pace instantly</p>
-        </header>
+      <header>
+        <h1>Pace Converter</h1>
+        <p>Convert your running pace instantly</p>
+      </header>
 
-        <div class="converter-box">
-            <div class="field">
-                <label for="pace-km">Pace (min/km)</label>
-                <input type="text" id="pace-km" placeholder="e.g. 5:30" autocomplete="off">
-            </div>
-
-            <div class="icon-swap">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 10v12" />
-                    <path d="M15 10v12" />
-                    <path d="m11 14-4-4-4 4" />
-                    <path d="m19 14-4-4-4 4" />
-                    <path d="M7 2v8" />
-                    <path d="M15 2v8" />
-                </svg>
-            </div>
-
-            <div class="field">
-                <label for="speed-kmh">Speed (km/h)</label>
-                <input type="text" id="speed-kmh" placeholder="0.0" autocomplete="off">
-            </div>
-            
-            <div class="divider"></div>
-
-            <div class="field-row">
-                <div class="field">
-                    <label for="finishtime-10k">10K</label>
-                    <input type="text" id="finishtime-10k" placeholder="0:00:00" autocomplete="off">
-                </div>
-                <div class="field">
-                    <label for="finishtime-half">Half</label>
-                    <input type="text" id="finishtime-half" placeholder="0:00:00" autocomplete="off">
-                </div>
-                <div class="field">
-                    <label for="finishtime-full">Full</label>
-                    <input type="text" id="finishtime-full" placeholder="0:00:00" autocomplete="off">
-                </div>
-            </div>
+      <div class="converter-box">
+        <div class="field">
+          <label for="pace-km">Pace (min/km)</label>
+          <input
+            type="text"
+            id="pace-km"
+            placeholder="e.g. 5:30"
+            autocomplete="off"
+          />
         </div>
-        <footer>
-            <a href="https://buymeacoffee.com/spacechild7" target="_blank" rel="noopener">
-                ☕ Buy me a coffee
-            </a>
-        </footer>
+
+        <div class="icon-swap">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M7 10v12" />
+            <path d="M15 10v12" />
+            <path d="m11 14-4-4-4 4" />
+            <path d="m19 14-4-4-4 4" />
+            <path d="M7 2v8" />
+            <path d="M15 2v8" />
+          </svg>
+        </div>
+
+        <div class="field">
+          <label for="speed-kmh">Speed (km/h)</label>
+          <input
+            type="text"
+            id="speed-kmh"
+            placeholder="0.0"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="finishtime-10k">10K</label>
+            <input
+              type="text"
+              id="finishtime-10k"
+              placeholder="0:00:00"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label for="finishtime-half">Half</label>
+            <input
+              type="text"
+              id="finishtime-half"
+              placeholder="0:00:00"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label for="finishtime-full">Full</label>
+            <input
+              type="text"
+              id="finishtime-full"
+              placeholder="0:00:00"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+      </div>
+      <footer>
+        <a
+          href="https://buymeacoffee.com/spacechild7"
+          target="_blank"
+          rel="noopener"
+        >
+          ☕ Buy me a coffee
+        </a>
+      </footer>
     </main>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
