@@ -6,12 +6,12 @@
     <title>Pace Converter for Garmin</title>
     <meta
       name="description"
-      content="A sleek pace converter for Garmin runners. Instantly convert between pace and speed."
+      content="A sleek pace converter for Garmin runners. Swipe between pace conversion, structured workout planning, and race goals."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -27,94 +27,426 @@
   <body>
     <div class="background-animation"></div>
 
-    <main class="glass-card">
-      <header>
-        <h1>Pace Converter</h1>
-        <p>Convert your running pace instantly</p>
-      </header>
+    <main class="viewport" id="viewport">
+      <div class="swipe-hint">Swipe across your running dashboard</div>
 
-      <div class="converter-box">
-        <div class="field">
-          <label for="pace-km">Pace (min/km)</label>
-          <input
-            type="text"
-            id="pace-km"
-            placeholder="e.g. 5:30"
-            autocomplete="off"
-          />
-        </div>
+      <div class="track" id="track">
+        <section class="page page-converter">
+          <article class="glass-card">
+            <div class="card-shell">
+              <header class="hero-header">
+                <h1>Pace Converter</h1>
+                <p class="hero-copy">Convert pace, speed, and race times</p>
+              </header>
 
-        <div class="icon-swap">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M7 10v12" />
-            <path d="M15 10v12" />
-            <path d="m11 14-4-4-4 4" />
-            <path d="m19 14-4-4-4 4" />
-            <path d="M7 2v8" />
-            <path d="M15 2v8" />
-          </svg>
-        </div>
+              <div class="page-scroll converter-box">
+                <div class="field">
+                  <label for="pace-km">Pace (min/km)</label>
+                  <input
+                    type="text"
+                    id="pace-km"
+                    placeholder="e.g. 5:30"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  />
+                </div>
 
-        <div class="field">
-          <label for="speed-kmh">Speed (km/h)</label>
-          <input
-            type="text"
-            id="speed-kmh"
-            placeholder="0.0"
-            autocomplete="off"
-          />
-        </div>
+                <div class="icon-swap" aria-hidden="true">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M7 10v12" />
+                    <path d="M15 10v12" />
+                    <path d="m11 14-4-4-4 4" />
+                    <path d="m19 14-4-4-4 4" />
+                    <path d="M7 2v8" />
+                    <path d="M15 2v8" />
+                  </svg>
+                </div>
 
-        <div class="divider"></div>
+                <div class="field">
+                  <label for="speed-kmh">Speed (km/h)</label>
+                  <input
+                    type="text"
+                    id="speed-kmh"
+                    placeholder="0.0"
+                    autocomplete="off"
+                    inputmode="decimal"
+                  />
+                </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label for="finishtime-10k">10K</label>
-            <input
-              type="text"
-              id="finishtime-10k"
-              placeholder="0:00:00"
-              autocomplete="off"
-            />
-          </div>
-          <div class="field">
-            <label for="finishtime-half">Half</label>
-            <input
-              type="text"
-              id="finishtime-half"
-              placeholder="0:00:00"
-              autocomplete="off"
-            />
-          </div>
-          <div class="field">
-            <label for="finishtime-full">Full</label>
-            <input
-              type="text"
-              id="finishtime-full"
-              placeholder="0:00:00"
-              autocomplete="off"
-            />
-          </div>
-        </div>
+                <div class="divider"></div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="finishtime-10k">10K</label>
+                    <input
+                      type="text"
+                      id="finishtime-10k"
+                      placeholder="0:00:00"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="finishtime-half">Half</label>
+                    <input
+                      type="text"
+                      id="finishtime-half"
+                      placeholder="0:00:00"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="finishtime-full">Full</label>
+                    <input
+                      type="text"
+                      id="finishtime-full"
+                      placeholder="0:00:00"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <footer class="card-footer">
+                <a
+                  href="https://buymeacoffee.com/spacechild7"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  ☕ Buy me a coffee
+                </a>
+              </footer>
+            </div>
+          </article>
+        </section>
+
+        <section class="page page-workout">
+          <article class="glass-card">
+            <div class="card-shell">
+              <header class="hero-header">
+                <h2>Structured Workout</h2>
+                <p class="hero-copy">When you do a multi-stage workout</p>
+              </header>
+
+              <div class="page-scroll workout-box">
+                <div class="section-heading">
+                  <span>Workout Paces</span>
+                  <button
+                    type="button"
+                    class="add-button"
+                    id="add-workout-row"
+                    aria-label="Add workout row"
+                  >
+                    + Add
+                  </button>
+                </div>
+
+                <div class="workout-rows" id="workout-rows">
+                  <div class="workout-row" data-row-id="1">
+                    <div class="workout-lane">
+                      <div class="field">
+                        <label for="workout-pace-1">Step 1</label>
+                        <input
+                          type="text"
+                          id="workout-pace-1"
+                          class="workout-pace-input"
+                          placeholder="e.g. 6:15"
+                          autocomplete="off"
+                          inputmode="numeric"
+                        />
+                      </div>
+                      <div class="workout-arrow" aria-hidden="true">→</div>
+                      <div class="speed-chip">
+                        <span class="speed-chip-label">Speed</span>
+                        <strong class="speed-chip-value" data-speed-for="1"
+                          >--</strong
+                        >
+                        <span class="speed-chip-unit">km/h</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="workout-row" data-row-id="2">
+                    <div class="workout-lane">
+                      <div class="field">
+                        <label for="workout-pace-2">Step 2</label>
+                        <input
+                          type="text"
+                          id="workout-pace-2"
+                          class="workout-pace-input"
+                          placeholder="e.g. 5:05"
+                          autocomplete="off"
+                          inputmode="numeric"
+                        />
+                      </div>
+                      <div class="workout-arrow" aria-hidden="true">→</div>
+                      <div class="speed-chip">
+                        <span class="speed-chip-label">Speed</span>
+                        <strong class="speed-chip-value" data-speed-for="2"
+                          >--</strong
+                        >
+                        <span class="speed-chip-unit">km/h</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="workout-row" data-row-id="3">
+                    <div class="workout-lane">
+                      <div class="field">
+                        <label for="workout-pace-3">Step 3</label>
+                        <input
+                          type="text"
+                          id="workout-pace-3"
+                          class="workout-pace-input"
+                          placeholder="e.g. 6:30"
+                          autocomplete="off"
+                          inputmode="numeric"
+                        />
+                      </div>
+                      <div class="workout-arrow" aria-hidden="true">→</div>
+                      <div class="speed-chip">
+                        <span class="speed-chip-label">Speed</span>
+                        <strong class="speed-chip-value" data-speed-for="3"
+                          >--</strong
+                        >
+                        <span class="speed-chip-unit">km/h</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="workout-row is-hidden" data-row-id="4">
+                    <div class="workout-lane">
+                      <div class="field">
+                        <label for="workout-pace-4">Step 4</label>
+                        <input
+                          type="text"
+                          id="workout-pace-4"
+                          class="workout-pace-input"
+                          placeholder="e.g. 6:00"
+                          autocomplete="off"
+                          inputmode="numeric"
+                        />
+                      </div>
+                      <div class="workout-arrow" aria-hidden="true">→</div>
+                      <div class="speed-chip">
+                        <span class="speed-chip-label">Speed</span>
+                        <strong class="speed-chip-value" data-speed-for="4"
+                          >--</strong
+                        >
+                        <span class="speed-chip-unit">km/h</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer class="card-footer">
+                <p>for Garmin Runners</p>
+              </footer>
+            </div>
+          </article>
+        </section>
+
+        <section class="page page-race-goals">
+          <article class="glass-card">
+            <div class="card-shell">
+              <header class="hero-header">
+                <h2>Next Race</h2>
+                <p class="hero-copy">Your best race, and next race</p>
+              </header>
+
+              <div class="page-scroll race-goals-box" id="race-goals-box">
+                <section class="race-slot" data-race-id="1">
+                  <div class="slot-header">
+                    <h3>Upcoming Race 1</h3>
+                    <p>Stored locally and restored on reload.</p>
+                  </div>
+
+                  <div class="slot-grid">
+                    <div class="field">
+                      <label for="race-name-1">Race Name</label>
+                      <input
+                        type="text"
+                        id="race-name-1"
+                        class="race-name-input"
+                        placeholder="Seoul Marathon"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-date-1">Race Date</label>
+                      <input
+                        type="date"
+                        id="race-date-1"
+                        class="race-date-input"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-type-1">Race Type</label>
+                      <select id="race-type-1" class="race-type-input">
+                        <option value="10K">10K</option>
+                        <option value="Half">Half</option>
+                        <option value="Full">Full</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="race-finish-1">Goal Finish Time</label>
+                      <input
+                        type="text"
+                        id="race-finish-1"
+                        class="race-finish-input"
+                        placeholder="0:50:00"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="race-summary" id="race-summary-1"></div>
+                </section>
+
+                <section class="race-slot" data-race-id="2">
+                  <div class="slot-header">
+                    <h3>Upcoming Race 2</h3>
+                    <p>Structured for future server sync.</p>
+                  </div>
+
+                  <div class="slot-grid">
+                    <div class="field">
+                      <label for="race-name-2">Race Name</label>
+                      <input
+                        type="text"
+                        id="race-name-2"
+                        class="race-name-input"
+                        placeholder="Busan Half"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-date-2">Race Date</label>
+                      <input
+                        type="date"
+                        id="race-date-2"
+                        class="race-date-input"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-type-2">Race Type</label>
+                      <select id="race-type-2" class="race-type-input">
+                        <option value="10K">10K</option>
+                        <option value="Half">Half</option>
+                        <option value="Full">Full</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="race-finish-2">Goal Finish Time</label>
+                      <input
+                        type="text"
+                        id="race-finish-2"
+                        class="race-finish-input"
+                        placeholder="1:45:00"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="race-summary" id="race-summary-2"></div>
+                </section>
+
+                <section class="race-slot" data-race-id="3">
+                  <div class="slot-header">
+                    <h3>Upcoming Race 3</h3>
+                    <p>Set the event and lock the goal time.</p>
+                  </div>
+
+                  <div class="slot-grid">
+                    <div class="field">
+                      <label for="race-name-3">Race Name</label>
+                      <input
+                        type="text"
+                        id="race-name-3"
+                        class="race-name-input"
+                        placeholder="Tokyo Marathon"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-date-3">Race Date</label>
+                      <input
+                        type="date"
+                        id="race-date-3"
+                        class="race-date-input"
+                      />
+                    </div>
+
+                    <div class="field">
+                      <label for="race-type-3">Race Type</label>
+                      <select id="race-type-3" class="race-type-input">
+                        <option value="10K">10K</option>
+                        <option value="Half">Half</option>
+                        <option value="Full">Full</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="race-finish-3">Goal Finish Time</label>
+                      <input
+                        type="text"
+                        id="race-finish-3"
+                        class="race-finish-input"
+                        placeholder="3:30:00"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="race-summary" id="race-summary-3"></div>
+                </section>
+              </div>
+            </div>
+          </article>
+        </section>
       </div>
-      <footer>
-        <a
-          href="https://buymeacoffee.com/spacechild7"
-          target="_blank"
-          rel="noopener"
-        >
-          ☕ Buy me a coffee
-        </a>
-      </footer>
+
+      <div class="indicator" id="indicator" aria-label="Page navigation">
+        <button
+          type="button"
+          class="dot active"
+          data-index="0"
+          aria-label="Go to page 1"
+        ></button>
+        <button
+          type="button"
+          class="dot"
+          data-index="1"
+          aria-label="Go to page 2"
+        ></button>
+        <button
+          type="button"
+          class="dot"
+          data-index="2"
+          aria-label="Go to page 3"
+        ></button>
+      </div>
     </main>
 
     <script src="script.js"></script>
