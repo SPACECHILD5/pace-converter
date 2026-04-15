@@ -555,6 +555,11 @@ let blockSwipe = false;
 const EDGE_GUARD = 24;
 const LOCK_THRESHOLD = 8;
 const SWIPE_THRESHOLD = 0.18;
+const SWIPE_BLOCK_SELECTOR = 'input, select, button, a, textarea, label';
+
+function isSwipeBlockedTarget(target) {
+    return target instanceof Element && Boolean(target.closest(SWIPE_BLOCK_SELECTOR));
+}
 
 function updateDots() {
     dots.forEach((dot, index) => {
@@ -589,14 +594,17 @@ function goTo(index) {
     applyPageStyle();
 }
 
-function onStart(x, y) {
+function onStart(x, y, target) {
     const viewportWidth = window.innerWidth;
-    blockSwipe = x <= EDGE_GUARD || x >= viewportWidth - EDGE_GUARD;
+    blockSwipe = isSwipeBlockedTarget(target) || x <= EDGE_GUARD || x >= viewportWidth - EDGE_GUARD;
     isDragging = !blockSwipe;
     axisLocked = null;
     startX = x;
     startY = y;
     currentX = x;
+
+    if (blockSwipe) return;
+
     track.style.transition = 'none';
     pages.forEach((page) => {
         page.style.transition = 'none';
@@ -668,7 +676,7 @@ function onEnd() {
 function attachSwipeHandlers() {
     viewport.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
-        onStart(touch.clientX, touch.clientY);
+        onStart(touch.clientX, touch.clientY, event.target);
     }, { passive: true });
 
     viewport.addEventListener('touchmove', (event) => {
@@ -680,7 +688,7 @@ function attachSwipeHandlers() {
     viewport.addEventListener('touchcancel', onEnd, { passive: true });
 
     viewport.addEventListener('mousedown', (event) => {
-        onStart(event.clientX, event.clientY);
+        onStart(event.clientX, event.clientY, event.target);
     });
 
     window.addEventListener('mousemove', (event) => {
