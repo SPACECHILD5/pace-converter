@@ -568,6 +568,8 @@ function updateDots() {
 }
 
 function applyPageStyle() {
+    document.body.dataset.page = currentPage;
+
     pages.forEach((page, index) => {
         if (index === currentPage) {
             page.style.transform = 'rotateY(0deg) scale(1)';
