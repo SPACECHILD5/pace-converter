@@ -4,7 +4,7 @@ const finishTime10kInput = document.getElementById('finishtime-10k');
 const finishTimeHalfInput = document.getElementById('finishtime-half');
 const finishTimeFullInput = document.getElementById('finishtime-full');
 
-const viewport = document.getElementById('viewport');
+const appStage = document.getElementById('app-stage');
 const track = document.getElementById('track');
 const pages = document.querySelectorAll('.page');
 const dots = document.querySelectorAll('.dot');
@@ -674,20 +674,20 @@ function onEnd() {
 }
 
 function attachSwipeHandlers() {
-    viewport.addEventListener('touchstart', (event) => {
+    appStage.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
         onStart(touch.clientX, touch.clientY, event.target);
     }, { passive: true });
 
-    viewport.addEventListener('touchmove', (event) => {
+    appStage.addEventListener('touchmove', (event) => {
         const touch = event.touches[0];
         onMove(touch.clientX, touch.clientY, event);
     }, { passive: false });
 
-    viewport.addEventListener('touchend', onEnd, { passive: true });
-    viewport.addEventListener('touchcancel', onEnd, { passive: true });
+    appStage.addEventListener('touchend', onEnd, { passive: true });
+    appStage.addEventListener('touchcancel', onEnd, { passive: true });
 
-    viewport.addEventListener('mousedown', (event) => {
+    appStage.addEventListener('mousedown', (event) => {
         onStart(event.clientX, event.clientY, event.target);
     });
 

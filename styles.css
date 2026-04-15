@@ -100,7 +100,7 @@ body::after {
   }
 }
 
-.viewport {
+.app-stage {
   position: relative;
   z-index: 1;
   width: 100vw;
@@ -208,7 +208,7 @@ body::after {
   height: 100%;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem 1.5rem;
 }
 
 .hero-header {
@@ -344,7 +344,7 @@ body::after {
 }
 
 .card-footer {
-  margin-top: 0;
+  margin-top: 0.6rem;
   text-align: center;
   border-top: 0;
   padding-top: 0.4rem;
@@ -531,10 +531,6 @@ body::after {
   line-height: 1;
 }
 
-.page-workout .card-footer {
-  margin-top: 0;
-}
-
 .page-workout .workout-box.is-compact {
   gap: 0.55rem;
 }
@@ -713,7 +709,7 @@ body::after {
   }
 
   .card-shell {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem 1rem;
   }
 
   .field-row,
@@ -775,7 +771,7 @@ body::after {
   }
 
   .card-shell {
-    padding: 1.5rem 1.25rem;
+    padding: 1.5rem 1.25rem 0.85rem;
   }
 
   .hero-header {
