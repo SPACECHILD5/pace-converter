@@ -36,12 +36,12 @@
         <section class="page page-converter">
           <article class="glass-card">
             <div class="card-shell">
-              <header class="hero-header">
+              <header class="card-header">
                 <h1>Pace Converter</h1>
-                <p class="hero-copy">Convert pace, speed, and race times</p>
+                <p class="card-subtitle">Convert pace, speed, and race times</p>
               </header>
 
-              <div class="page-scroll converter-box">
+              <div class="card-body converter-box">
                 <div class="field">
                   <label for="pace-km">Pace (min/km)</label>
                   <input
@@ -136,12 +136,12 @@
         <section class="page page-workout">
           <article class="glass-card">
             <div class="card-shell">
-              <header class="hero-header">
+              <header class="card-header">
                 <h2>Structured Workout</h2>
-                <p class="hero-copy">When you do a multi-stage workout</p>
+                <p class="card-subtitle">When you do a multi-stage workout</p>
               </header>
 
-              <div class="page-scroll workout-box">
+              <div class="card-body workout-box">
                 <div class="section-heading">
                   <span>Workout Paces</span>
                   <button
@@ -262,168 +262,11 @@
         <section class="page page-race-goals">
           <article class="glass-card">
             <div class="card-shell">
-              <header class="hero-header">
+              <header class="card-header">
                 <h2>Next Race</h2>
-                <p class="hero-copy">Best record, and your next</p>
+                <p class="card-subtitle">Best record, and your next</p>
               </header>
 
-              <div class="page-scroll race-goals-box" id="race-goals-box">
-                <section class="race-slot" data-race-id="1">
-                  <div class="slot-header">
-                    <h3>Upcoming Race 1</h3>
-                    <p>Stored locally and restored on reload.</p>
-                  </div>
-
-                  <div class="slot-grid">
-                    <div class="field">
-                      <label for="race-name-1">Race Name</label>
-                      <input
-                        type="text"
-                        id="race-name-1"
-                        class="race-name-input"
-                        placeholder="Seoul Marathon"
-                        autocomplete="off"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-date-1">Race Date</label>
-                      <input
-                        type="date"
-                        id="race-date-1"
-                        class="race-date-input"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-type-1">Race Type</label>
-                      <select id="race-type-1" class="race-type-input">
-                        <option value="10K">10K</option>
-                        <option value="Half">Half</option>
-                        <option value="Full">Full</option>
-                      </select>
-                    </div>
-
-                    <div class="field">
-                      <label for="race-finish-1">Goal Finish Time</label>
-                      <input
-                        type="text"
-                        id="race-finish-1"
-                        class="race-finish-input"
-                        placeholder="0:50:00"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="race-summary" id="race-summary-1"></div>
-                </section>
-
-                <section class="race-slot" data-race-id="2">
-                  <div class="slot-header">
-                    <h3>Upcoming Race 2</h3>
-                    <p>Structured for future server sync.</p>
-                  </div>
-
-                  <div class="slot-grid">
-                    <div class="field">
-                      <label for="race-name-2">Race Name</label>
-                      <input
-                        type="text"
-                        id="race-name-2"
-                        class="race-name-input"
-                        placeholder="Busan Half"
-                        autocomplete="off"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-date-2">Race Date</label>
-                      <input
-                        type="date"
-                        id="race-date-2"
-                        class="race-date-input"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-type-2">Race Type</label>
-                      <select id="race-type-2" class="race-type-input">
-                        <option value="10K">10K</option>
-                        <option value="Half">Half</option>
-                        <option value="Full">Full</option>
-                      </select>
-                    </div>
-
-                    <div class="field">
-                      <label for="race-finish-2">Goal Finish Time</label>
-                      <input
-                        type="text"
-                        id="race-finish-2"
-                        class="race-finish-input"
-                        placeholder="1:45:00"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="race-summary" id="race-summary-2"></div>
-                </section>
-
-                <section class="race-slot" data-race-id="3">
-                  <div class="slot-header">
-                    <h3>Upcoming Race 3</h3>
-                    <p>Set the event and lock the goal time.</p>
-                  </div>
-
-                  <div class="slot-grid">
-                    <div class="field">
-                      <label for="race-name-3">Race Name</label>
-                      <input
-                        type="text"
-                        id="race-name-3"
-                        class="race-name-input"
-                        placeholder="Tokyo Marathon"
-                        autocomplete="off"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-date-3">Race Date</label>
-                      <input
-                        type="date"
-                        id="race-date-3"
-                        class="race-date-input"
-                      />
-                    </div>
-
-                    <div class="field">
-                      <label for="race-type-3">Race Type</label>
-                      <select id="race-type-3" class="race-type-input">
-                        <option value="10K">10K</option>
-                        <option value="Half">Half</option>
-                        <option value="Full">Full</option>
-                      </select>
-                    </div>
-
-                    <div class="field">
-                      <label for="race-finish-3">Goal Finish Time</label>
-                      <input
-                        type="text"
-                        id="race-finish-3"
-                        class="race-finish-input"
-                        placeholder="3:30:00"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="race-summary" id="race-summary-3"></div>
-                </section>
-              </div>
               <footer class="card-footer">
                 <p>for Garmin Runners</p>
               </footer>

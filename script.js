@@ -13,19 +13,10 @@ const addWorkoutRowButton = document.getElementById('add-workout-row');
 const workoutRows = Array.from(document.querySelectorAll('.workout-row'));
 const workoutPaceInputs = Array.from(document.querySelectorAll('.workout-pace-input'));
 const workoutBox = document.querySelector('.workout-box');
-const raceSlots = [1, 2, 3].map((id) => ({
-    id,
-    nameInput: document.getElementById(`race-name-${id}`),
-    dateInput: document.getElementById(`race-date-${id}`),
-    typeInput: document.getElementById(`race-type-${id}`),
-    finishInput: document.getElementById(`race-finish-${id}`),
-    summary: document.getElementById(`race-summary-${id}`),
-}));
 
 const DISTANCE_10K = 10.0;
 const DISTANCE_HALF = 21.0975;
 const DISTANCE_FULL = 42.195;
-const LOCAL_STORAGE_KEY = 'pace-converter-race-goals-v1';
 
 const converterState = {
     activeField: null,
@@ -37,14 +28,6 @@ const structuredWorkoutRows = [
     { id: 3, pace: '', speed: '' },
     { id: 4, pace: '', speed: '' },
 ];
-
-const raceGoals = [1, 2, 3].map((id) => ({
-    id,
-    raceName: '',
-    raceDate: '',
-    raceType: '10K',
-    finishTime: '',
-}));
 
 let visibleWorkoutRows = 3;
 
@@ -356,129 +339,6 @@ function attachWorkoutInputHandlers() {
     });
 }
 
-function formatRaceDate(dateString) {
-    if (!dateString) return 'Date TBD';
-
-    const date = new Date(`${dateString}T00:00:00`);
-    if (Number.isNaN(date.getTime())) return 'Date TBD';
-
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    }).format(date);
-}
-
-function buildRaceSummary(goal) {
-    const name = goal.raceName.trim() || 'Untitled race';
-    const date = formatRaceDate(goal.raceDate);
-    const type = goal.raceType || '10K';
-    const finishTime = goal.finishTime || 'Goal time not set';
-
-    return `${name} · ${date} · ${type} · ${finishTime}`;
-}
-
-function renderRaceSummary(goalId) {
-    const goal = raceGoals.find((item) => item.id === goalId);
-    const slot = raceSlots.find((item) => item.id === goalId);
-    if (!goal || !slot) return;
-    slot.summary.textContent = buildRaceSummary(goal);
-}
-
-function persistRaceGoals() {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(raceGoals));
-}
-
-function hydrateRaceGoals() {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!saved) {
-        raceGoals.forEach((goal) => renderRaceSummary(goal.id));
-        return;
-    }
-
-    try {
-        const parsed = JSON.parse(saved);
-        parsed.forEach((savedGoal, index) => {
-            const goal = raceGoals[index];
-            const slot = raceSlots[index];
-            if (!goal || !slot) return;
-
-            goal.raceName = typeof savedGoal.raceName === 'string' ? savedGoal.raceName : '';
-            goal.raceDate = typeof savedGoal.raceDate === 'string' ? savedGoal.raceDate : '';
-            goal.raceType = ['10K', 'Half', 'Full'].includes(savedGoal.raceType) ? savedGoal.raceType : '10K';
-            goal.finishTime = typeof savedGoal.finishTime === 'string' ? savedGoal.finishTime : '';
-
-            slot.nameInput.value = goal.raceName;
-            slot.dateInput.value = goal.raceDate;
-            slot.typeInput.value = goal.raceType;
-            slot.finishInput.value = goal.finishTime;
-            renderRaceSummary(goal.id);
-        });
-    } catch (error) {
-        raceGoals.forEach((goal) => renderRaceSummary(goal.id));
-    }
-}
-
-function attachRaceGoalHandlers() {
-    raceSlots.forEach((slot) => {
-        slot.nameInput.addEventListener('input', () => {
-            const goal = raceGoals.find((item) => item.id === slot.id);
-            if (!goal) return;
-            goal.raceName = slot.nameInput.value;
-            renderRaceSummary(slot.id);
-            persistRaceGoals();
-        });
-
-        slot.dateInput.addEventListener('input', () => {
-            const goal = raceGoals.find((item) => item.id === slot.id);
-            if (!goal) return;
-            goal.raceDate = slot.dateInput.value;
-            renderRaceSummary(slot.id);
-            persistRaceGoals();
-        });
-
-        slot.typeInput.addEventListener('change', () => {
-            const goal = raceGoals.find((item) => item.id === slot.id);
-            if (!goal) return;
-            goal.raceType = slot.typeInput.value;
-            renderRaceSummary(slot.id);
-            persistRaceGoals();
-        });
-
-        slot.finishInput.addEventListener('input', () => {
-            const goal = raceGoals.find((item) => item.id === slot.id);
-            if (!goal) return;
-
-            const formatted = formatFinishTimeInputValue(slot.finishInput.value);
-            slot.finishInput.value = formatted;
-            goal.finishTime = formatted;
-            renderRaceSummary(slot.id);
-            persistRaceGoals();
-        });
-
-        slot.finishInput.addEventListener('blur', () => {
-            const goal = raceGoals.find((item) => item.id === slot.id);
-            if (!goal) return;
-
-            const updated = normalizeFinishTimeOnBlur(slot.finishInput, 2);
-            if (updated) {
-                goal.finishTime = slot.finishInput.value;
-            }
-
-            if (slot.finishInput.value && parseFinishTimeToSeconds(slot.finishInput.value) === null) {
-                slot.finishInput.value = '';
-                goal.finishTime = '';
-            } else {
-                goal.finishTime = slot.finishInput.value;
-            }
-
-            renderRaceSummary(slot.id);
-            persistRaceGoals();
-        });
-
-        slot.finishInput.addEventListener('keydown', handleEnterBlur);
-    });
-}
 
 function attachConverterHandlers() {
     const converterInputs = [paceInput, speedInput, finishTime10kInput, finishTimeHalfInput, finishTimeFullInput];
@@ -709,8 +569,6 @@ function attachSwipeHandlers() {
 
 attachConverterHandlers();
 attachWorkoutInputHandlers();
-attachRaceGoalHandlers();
-hydrateRaceGoals();
 updateWorkoutRowVisibility();
 attachSwipeHandlers();
 applyPageStyle();
