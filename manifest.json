@@ -1,0 +1,9 @@
+{
+  "name": "Pace Converter",
+  "short_name": "Pace",
+  "description": "A sleek pace converter for Garmin runners.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a"
+}
