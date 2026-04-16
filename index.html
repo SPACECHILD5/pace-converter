@@ -6,7 +6,7 @@
     <title>Pace Converter for Garmin</title>
     <meta
       name="description"
-      content="A sleek pace converter for Garmin runners. Swipe between pace conversion, structured workout planning, and race goals."
+      content="A sleek pace converter for Garmin runners."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,17 +25,17 @@
     />
   </head>
   <body>
-    <div class="background-animation">
+    <div class="backdrop">
       <div class="bg-layer bg-layer-0"></div>
       <div class="bg-layer bg-layer-1"></div>
       <div class="bg-layer bg-layer-2"></div>
     </div>
 
-    <main class="app-stage" id="app-stage">
-      <div class="track" id="track">
+    <main class="carousel" id="carousel">
+      <div class="carousel-track" id="carousel-track">
         <section class="page page-converter">
-          <article class="glass-card">
-            <div class="card-shell">
+          <article class="card">
+            <div class="card-inner">
               <header class="card-header">
                 <h1>Pace Converter</h1>
                 <p class="card-subtitle">Convert pace, speed, and race times</p>
@@ -134,8 +134,8 @@
         </section>
 
         <section class="page page-workout">
-          <article class="glass-card">
-            <div class="card-shell">
+          <article class="card">
+            <div class="card-inner">
               <header class="card-header">
                 <h2>Structured Workout</h2>
                 <p class="card-subtitle">When you do a multi-stage workout</p>
@@ -260,8 +260,8 @@
         </section>
 
         <section class="page page-race-goals">
-          <article class="glass-card">
-            <div class="card-shell">
+          <article class="card">
+            <div class="card-inner">
               <header class="card-header">
                 <h2>Next Race</h2>
                 <p class="card-subtitle">Best record, and your next</p>

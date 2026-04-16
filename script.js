@@ -4,8 +4,8 @@ const finishTime10kInput = document.getElementById('finishtime-10k');
 const finishTimeHalfInput = document.getElementById('finishtime-half');
 const finishTimeFullInput = document.getElementById('finishtime-full');
 
-const appStage = document.getElementById('app-stage');
-const track = document.getElementById('track');
+const carouselEl = document.getElementById('carousel');
+const carouselTrack = document.getElementById('carousel-track');
 const pages = document.querySelectorAll('.page');
 const dots = document.querySelectorAll('.dot');
 
@@ -443,13 +443,13 @@ function applyPageStyle() {
         }
     });
 
-    track.style.transform = `translate3d(-${currentPage * window.innerWidth}px, 0, 0)`;
+    carouselTrack.style.transform = `translate3d(-${currentPage * window.innerWidth}px, 0, 0)`;
     updateDots();
 }
 
 function goTo(index) {
     currentPage = Math.max(0, Math.min(index, pages.length - 1));
-    track.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)';
+    carouselTrack.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)';
     pages.forEach((page) => {
         page.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease';
     });
@@ -467,7 +467,7 @@ function onStart(x, y, target) {
 
     if (blockSwipe) return;
 
-    track.style.transition = 'none';
+    carouselTrack.style.transition = 'none';
     pages.forEach((page) => {
         page.style.transition = 'none';
     });
@@ -497,7 +497,7 @@ function onMove(x, y, event) {
         moveX = baseX + (diffX * 0.34);
     }
 
-    track.style.transform = `translate3d(${moveX}px, 0, 0)`;
+    carouselTrack.style.transform = `translate3d(${moveX}px, 0, 0)`;
 
     const rotateAmount = Math.max(-24, Math.min(24, diffX / 8));
     pages.forEach((page, index) => {
@@ -536,20 +536,20 @@ function onEnd() {
 }
 
 function attachSwipeHandlers() {
-    appStage.addEventListener('touchstart', (event) => {
+    carouselEl.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
         onStart(touch.clientX, touch.clientY, event.target);
     }, { passive: true });
 
-    appStage.addEventListener('touchmove', (event) => {
+    carouselEl.addEventListener('touchmove', (event) => {
         const touch = event.touches[0];
         onMove(touch.clientX, touch.clientY, event);
     }, { passive: false });
 
-    appStage.addEventListener('touchend', onEnd, { passive: true });
-    appStage.addEventListener('touchcancel', onEnd, { passive: true });
+    carouselEl.addEventListener('touchend', onEnd, { passive: true });
+    carouselEl.addEventListener('touchcancel', onEnd, { passive: true });
 
-    appStage.addEventListener('mousedown', (event) => {
+    carouselEl.addEventListener('mousedown', (event) => {
         onStart(event.clientX, event.clientY, event.target);
     });
 
