@@ -277,6 +277,7 @@ body[data-page="2"] .bg-layer-2 {
 .card-body {
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .converter-box,
@@ -287,7 +288,7 @@ body[data-page="2"] .bg-layer-2 {
 }
 
 .converter-box {
-  gap: 1.25rem;
+  gap: clamp(0.5rem, 2vh, 1.25rem);
 }
 
 .field {
@@ -346,7 +347,7 @@ body[data-page="2"] .bg-layer-2 {
   justify-content: center;
   align-items: center;
   color: var(--primary-color);
-  padding: 0.5rem 0;
+  padding: clamp(0.15rem, 0.8vh, 0.5rem) 0;
   opacity: 0.7;
   transition:
     transform 0.4s ease,
@@ -362,9 +363,8 @@ body[data-page="2"] .bg-layer-2 {
 
 .divider {
   height: 1px;
-  margin: 1.25rem 0;
+  margin: clamp(0.4rem, 1.5vh, 1.25rem) 0;
   background: var(--border-strong);
-  flex-shrink: 0;
   opacity: 0.6;
 }
 
@@ -627,6 +627,7 @@ body[data-page="2"] .bg-layer-2 {
   justify-self: center;
   display: flex;
   gap: 0;
+  margin-top: 12px;
   margin-bottom: max(18px, calc(env(safe-area-inset-bottom) + 8px));
   z-index: 20;
 }
@@ -754,10 +755,6 @@ body[data-page="2"] .bg-layer-2 {
     font-size: 1.75rem;
   }
 
-  .converter-box {
-    gap: 0.9rem;
-  }
-
   .field {
     gap: 6px;
   }
@@ -771,9 +768,5 @@ body[data-page="2"] .bg-layer-2 {
   #pace-km,
   #speed-kmh {
     font-size: 1.35rem;
-  }
-
-  .divider {
-    margin: 0.6rem 0;
   }
 }
