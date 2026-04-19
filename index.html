@@ -140,11 +140,38 @@
             <div class="card-inner">
               <header class="card-header">
                 <h1>Structured Workout</h1>
-                <p class="card-subtitle">When you do a multi-stage workout</p>
+                <p class="card-subtitle">When you do a multi-step workout</p>
               </header>
 
               <section class="card-body workout-box">
-                <div class="section-heading">
+                <div class="field">
+                  <div>
+                    <label for="page-workout-pace-1">Step 1</label>
+                    <input
+                      type="text"
+                      id="page-workout-pace-1"
+                      placeholder="e.g. 6:15"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <polyline points="12,8 16,12 12,16" />
+                  </svg>
+                </div>
+
+                <!-- <div class="section-heading">
                   <span>Workout Paces</span>
                   <button
                     type="button"
@@ -252,7 +279,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </section>
               <footer class="card-footer">
                 <p>for Garmin Runners</p>
