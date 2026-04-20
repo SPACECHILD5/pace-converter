@@ -144,9 +144,9 @@
               </header>
 
               <section class="card-body workout-box">
-                <div class="field">
-                  <div>
-                    <label for="page-workout-pace-1">Step 1</label>
+                <div class="converter-row">
+                  <div class="field">
+                    <label for="page-workout-pace-1">Pace (min/km)</label>
                     <input
                       type="text"
                       id="page-workout-pace-1"
@@ -155,131 +155,32 @@
                       inputmode="numeric"
                     />
                   </div>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="8" y1="12" x2="16" y2="12" />
-                    <polyline points="12,8 16,12 12,16" />
-                  </svg>
+
+                  <div class="converter-arrow" aria-hidden="true">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </div>
+
+                  <div class="field">
+                    <label>Speed (km/h)</label>
+                    <div class="result-box">
+                      <span id="page-workout-speed-1" class="result-value"
+                        >--</span
+                      >
+                    </div>
+                  </div>
                 </div>
-
-                <!-- <div class="section-heading">
-                  <span>Workout Paces</span>
-                  <button
-                    type="button"
-                    class="add-button"
-                    id="add-workout-row"
-                    aria-label="Add workout row"
-                  >
-                    + Add
-                  </button>
-                </div>
-
-                <div class="workout-rows" id="workout-rows">
-                  <div class="workout-row" data-row-id="1">
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label for="workout-pace-1">Step 1</label>
-                        <input
-                          type="text"
-                          id="workout-pace-1"
-                          class="workout-pace-input"
-                          placeholder="e.g. 6:15"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-                      <div class="workout-arrow" aria-hidden="true">→</div>
-                      <div class="speed-chip">
-                        <span class="speed-chip-label">Speed</span>
-                        <strong class="speed-chip-value" data-speed-for="1"
-                          >--</strong
-                        >
-                        <span class="speed-chip-unit">km/h</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="workout-row" data-row-id="2">
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label for="workout-pace-2">Step 2</label>
-                        <input
-                          type="text"
-                          id="workout-pace-2"
-                          class="workout-pace-input"
-                          placeholder="e.g. 5:05"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-                      <div class="workout-arrow" aria-hidden="true">→</div>
-                      <div class="speed-chip">
-                        <span class="speed-chip-label">Speed</span>
-                        <strong class="speed-chip-value" data-speed-for="2"
-                          >--</strong
-                        >
-                        <span class="speed-chip-unit">km/h</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="workout-row" data-row-id="3">
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label for="workout-pace-3">Step 3</label>
-                        <input
-                          type="text"
-                          id="workout-pace-3"
-                          class="workout-pace-input"
-                          placeholder="e.g. 6:30"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-                      <div class="workout-arrow" aria-hidden="true">→</div>
-                      <div class="speed-chip">
-                        <span class="speed-chip-label">Speed</span>
-                        <strong class="speed-chip-value" data-speed-for="3"
-                          >--</strong
-                        >
-                        <span class="speed-chip-unit">km/h</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="workout-row is-hidden" data-row-id="4">
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label for="workout-pace-4">Step 4</label>
-                        <input
-                          type="text"
-                          id="workout-pace-4"
-                          class="workout-pace-input"
-                          placeholder="e.g. 6:00"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-                      <div class="workout-arrow" aria-hidden="true">→</div>
-                      <div class="speed-chip">
-                        <span class="speed-chip-label">Speed</span>
-                        <strong class="speed-chip-value" data-speed-for="4"
-                          >--</strong
-                        >
-                        <span class="speed-chip-unit">km/h</span>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
               </section>
               <footer class="card-footer">
                 <p>for Garmin Runners</p>

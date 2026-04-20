@@ -510,6 +510,30 @@ function updateWorkoutRowSpeed(rowId) {
 }
 
 function attachWorkoutInputHandlers() {
+  const step1PaceInput = document.getElementById("page-workout-pace-1");
+  const step1SpeedOutput = document.getElementById("page-workout-speed-1");
+
+  if (step1PaceInput && step1SpeedOutput) {
+    step1PaceInput.addEventListener("input", (event) => {
+      const formattedPace = formatPaceInputValue(event.target.value);
+      event.target.value = formattedPace;
+      const speed = calculateSpeedFromPace(formattedPace);
+      step1SpeedOutput.textContent = speed || "--";
+    });
+
+    step1PaceInput.addEventListener("blur", (event) => {
+      if (
+        event.target.value &&
+        parsePaceToSeconds(event.target.value) === null
+      ) {
+        event.target.value = "";
+        step1SpeedOutput.textContent = "--";
+      }
+    });
+
+    step1PaceInput.addEventListener("keydown", handleEnterBlur);
+  }
+
   if (!addWorkoutRowButton || workoutPaceInputs.length === 0) return;
 
   workoutPaceInputs.forEach((input) => {
