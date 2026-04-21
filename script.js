@@ -493,7 +493,9 @@ function handleEnterBlur(event) {
 function updateWorkoutRowVisibility() {
   if (!addWorkoutRowButton) return;
   workoutRows.forEach((row, index) => {
-    row.classList.toggle("is-hidden", index + 1 > visibleWorkoutRows);
+    const isHidden = index + 1 > visibleWorkoutRows;
+    row.classList.toggle("is-hidden", isHidden);
+    row.setAttribute("aria-hidden", String(isHidden));
   });
   addWorkoutRowButton.disabled = visibleWorkoutRows >= 4;
   if (workoutBox) {
@@ -510,31 +512,7 @@ function updateWorkoutRowSpeed(rowId) {
 }
 
 function attachWorkoutInputHandlers() {
-  const step1PaceInput = document.getElementById("page-workout-pace-1");
-  const step1SpeedOutput = document.getElementById("page-workout-speed-1");
-
-  if (step1PaceInput && step1SpeedOutput) {
-    step1PaceInput.addEventListener("input", (event) => {
-      const formattedPace = formatPaceInputValue(event.target.value);
-      event.target.value = formattedPace;
-      const speed = calculateSpeedFromPace(formattedPace);
-      step1SpeedOutput.textContent = speed || "--";
-    });
-
-    step1PaceInput.addEventListener("blur", (event) => {
-      if (
-        event.target.value &&
-        parsePaceToSeconds(event.target.value) === null
-      ) {
-        event.target.value = "";
-        step1SpeedOutput.textContent = "--";
-      }
-    });
-
-    step1PaceInput.addEventListener("keydown", handleEnterBlur);
-  }
-
-  if (!addWorkoutRowButton || workoutPaceInputs.length === 0) return;
+  if (workoutPaceInputs.length === 0) return;
 
   workoutPaceInputs.forEach((input) => {
     input.addEventListener("input", (event) => {
@@ -569,11 +547,12 @@ function attachWorkoutInputHandlers() {
     input.addEventListener("keydown", handleEnterBlur);
   });
 
+  if (!addWorkoutRowButton) return;
+
   addWorkoutRowButton.addEventListener("click", () => {
-    if (visibleWorkoutRows < 4) {
-      visibleWorkoutRows += 1;
-      updateWorkoutRowVisibility();
-    }
+    if (visibleWorkoutRows >= 4) return;
+    visibleWorkoutRows += 1;
+    updateWorkoutRowVisibility();
   });
 }
 
