@@ -509,6 +509,34 @@ function updateWorkoutRowSpeed(rowId) {
   const output = document.querySelector(`[data-speed-for="${rowId}"]`);
   if (!row || !output) return;
   output.textContent = row.speed || "--";
+  updateWorkoutSummary();
+}
+
+function updateWorkoutSummary() {
+  const avgPaceEl = document.getElementById("avg-pace");
+  const avgSpeedEl = document.getElementById("avg-speed");
+  if (!avgPaceEl || !avgSpeedEl) return;
+
+  const visibleRows = structuredWorkoutRows.slice(0, visibleWorkoutRows);
+  const filledRows = visibleRows.filter(
+    (row) => row.pace && parsePaceToSeconds(row.pace) !== null,
+  );
+
+  if (filledRows.length === 0) {
+    avgPaceEl.textContent = "--:--";
+    avgSpeedEl.textContent = "--.- km/h";
+    return;
+  }
+
+  const totalSeconds = filledRows.reduce(
+    (sum, row) => sum + parsePaceToSeconds(row.pace),
+    0,
+  );
+  const avgSecPerKm = totalSeconds / filledRows.length;
+  const avgSpeed = 3600 / avgSecPerKm;
+
+  avgPaceEl.textContent = formatSecondsToPace(avgSecPerKm);
+  avgSpeedEl.textContent = `${avgSpeed.toFixed(1)} km/h`;
 }
 
 function attachWorkoutInputHandlers() {

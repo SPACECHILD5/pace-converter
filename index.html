@@ -144,199 +144,119 @@
               </header>
 
               <section class="card-body workout-box">
-                <div class="workout-box-actions">
-                  <button
-                    type="button"
-                    class="add-button add-button-corner"
-                    id="add-workout-row"
-                    aria-controls="workout-rows"
-                    aria-label="Add one more workout stage"
-                  >
-                    +
-                  </button>
+                <div class="pill-header" aria-hidden="true">
+                  <span class="pill-header-pace">Pace</span>
+                  <span class="pill-header-speed">Speed</span>
                 </div>
-                <!-- <div class="workout-columns" aria-hidden="true">
-                  <span class="workout-columns-spacer"></span>
-                  <span>Pace</span>
-                  <span class="workout-columns-arrow"></span>
-                  <span>Speed</span>
-                </div> -->
 
                 <div class="workout-rows" id="workout-rows">
                   <article class="workout-row" data-row-id="1">
-                    <div class="workout-row-header">
-                      <span class="workout-step-label">STEP 1</span>
+                    <span class="pill-num">1</span>
+                    <div class="pill-pace">
+                      <label class="sr-only" for="page-workout-pace-1"
+                        >STEP 1 pace</label
+                      >
+                      <input
+                        type="text"
+                        id="page-workout-pace-1"
+                        class="workout-pace-input"
+                        placeholder="5:30"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
                     </div>
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label class="sr-only" for="page-workout-pace-1"
-                          >STEP 1 pace</label
-                        >
-                        <input
-                          type="text"
-                          id="page-workout-pace-1"
-                          class="workout-pace-input"
-                          placeholder="e.g. 6:15"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-
-                      <div class="workout-arrow" aria-hidden="true">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m12 5 7 7-7 7" />
-                        </svg>
-                      </div>
-
-                      <div class="speed-chip" aria-live="polite">
-                        <span
-                          id="page-workout-speed-1"
-                          class="speed-chip-value"
-                          data-speed-for="1"
-                          >--</span
-                        >
-                      </div>
+                    <div class="pill-speed" aria-live="polite">
+                      <span
+                        id="page-workout-speed-1"
+                        class="speed-chip-value"
+                        data-speed-for="1"
+                        >--</span
+                      >
                     </div>
                   </article>
 
                   <article class="workout-row" data-row-id="2">
-                    <div class="workout-row-header">
-                      <span class="workout-step-label">STEP 2</span>
+                    <span class="pill-num">2</span>
+                    <div class="pill-pace">
+                      <label class="sr-only" for="page-workout-pace-2"
+                        >STEP 2 pace</label
+                      >
+                      <input
+                        type="text"
+                        id="page-workout-pace-2"
+                        class="workout-pace-input"
+                        placeholder="5:10"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
                     </div>
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label class="sr-only" for="page-workout-pace-2"
-                          >STEP 2 pace</label
-                        >
-                        <input
-                          type="text"
-                          id="page-workout-pace-2"
-                          class="workout-pace-input"
-                          placeholder="e.g. 5:10"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-
-                      <div class="workout-arrow" aria-hidden="true">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m12 5 7 7-7 7" />
-                        </svg>
-                      </div>
-
-                      <div class="speed-chip" aria-live="polite">
-                        <span class="speed-chip-value" data-speed-for="2"
-                          >--</span
-                        >
-                      </div>
+                    <div class="pill-speed" aria-live="polite">
+                      <span class="speed-chip-value" data-speed-for="2"
+                        >--</span
+                      >
                     </div>
                   </article>
 
                   <article class="workout-row" data-row-id="3">
-                    <div class="workout-row-header">
-                      <span class="workout-step-label">STEP 3</span>
+                    <span class="pill-num">3</span>
+                    <div class="pill-pace">
+                      <label class="sr-only" for="page-workout-pace-3"
+                        >STEP 3 pace</label
+                      >
+                      <input
+                        type="text"
+                        id="page-workout-pace-3"
+                        class="workout-pace-input"
+                        placeholder="4:40"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
                     </div>
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label class="sr-only" for="page-workout-pace-3"
-                          >STEP 3 pace</label
-                        >
-                        <input
-                          type="text"
-                          id="page-workout-pace-3"
-                          class="workout-pace-input"
-                          placeholder="e.g. 4:40"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-
-                      <div class="workout-arrow" aria-hidden="true">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m12 5 7 7-7 7" />
-                        </svg>
-                      </div>
-
-                      <div class="speed-chip" aria-live="polite">
-                        <span class="speed-chip-value" data-speed-for="3"
-                          >00.0</span
-                        >
-                      </div>
+                    <div class="pill-speed" aria-live="polite">
+                      <span class="speed-chip-value" data-speed-for="3"
+                        >--</span
+                      >
                     </div>
                   </article>
 
                   <article class="workout-row is-hidden" data-row-id="4">
-                    <div class="workout-row-header">
-                      <span class="workout-step-label">STEP 4</span>
+                    <span class="pill-num">4</span>
+                    <div class="pill-pace">
+                      <label class="sr-only" for="page-workout-pace-4"
+                        >STEP 4 pace</label
+                      >
+                      <input
+                        type="text"
+                        id="page-workout-pace-4"
+                        class="workout-pace-input"
+                        placeholder="6:15"
+                        autocomplete="off"
+                        inputmode="numeric"
+                      />
                     </div>
-                    <div class="workout-lane">
-                      <div class="field">
-                        <label class="sr-only" for="page-workout-pace-4"
-                          >STEP 4 pace</label
-                        >
-                        <input
-                          type="text"
-                          id="page-workout-pace-4"
-                          class="workout-pace-input"
-                          placeholder="e.g. 6:15"
-                          autocomplete="off"
-                          inputmode="numeric"
-                        />
-                      </div>
-
-                      <div class="workout-arrow" aria-hidden="true">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m12 5 7 7-7 7" />
-                        </svg>
-                      </div>
-
-                      <div class="speed-chip" aria-live="polite">
-                        <span class="speed-chip-value" data-speed-for="4"
-                          >--</span
-                        >
-                      </div>
+                    <div class="pill-speed" aria-live="polite">
+                      <span class="speed-chip-value" data-speed-for="4"
+                        >--</span
+                      >
                     </div>
                   </article>
+                </div>
+
+                <button
+                  type="button"
+                  class="add-step-btn"
+                  id="add-workout-row"
+                  aria-controls="workout-rows"
+                  aria-label="Add one more workout stage"
+                >
+                  + Add Step
+                </button>
+
+                <div class="workout-summary" id="workout-summary">
+                  <span class="summary-label">AVG</span>
+                  <span class="summary-pace" id="avg-pace">--:--</span>
+                  <span class="summary-divider"></span>
+                  <span class="summary-speed" id="avg-speed">--.- km/h</span>
                 </div>
               </section>
               <footer class="card-footer">
