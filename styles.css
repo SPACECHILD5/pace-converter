@@ -347,6 +347,7 @@ body[data-page="2"] .bg-layer-2 {
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  text-align: left;
 }
 
 .field input {
@@ -417,12 +418,17 @@ body[data-page="2"] .bg-layer-2 {
   gap: 12px;
 }
 
+.field-row .field label {
+  text-align: center;
+  margin-left: 0;
+}
+
 .field-row input {
   height: 44px;
   min-height: 38px;
   flex-shrink: 1;
   padding: 0.65rem 0.9rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .card-footer {
@@ -466,8 +472,7 @@ body[data-page="2"] .bg-layer-2 {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 10px;
-  padding-top: 0.4rem;
+  gap: clamp(8px, 1.5vh, 16px);
 }
 
 /* Column headers */
@@ -490,15 +495,6 @@ body[data-page="2"] .bg-layer-2 {
 
 .pill-header-speed {
   text-align: center;
-}
-
-/* workout-row, add-step-btn, workout-summary wrapper */
-.workout-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: clamp(8px, 1.5vh, 16px);
-  min-height: 0;
 }
 
 /* Individual pill row */
@@ -773,10 +769,6 @@ body[data-page="2"] .bg-layer-2 {
     font-size: 0.95rem;
   }
 
-  .converter-box {
-    gap: 1.1rem;
-  }
-
   .icon-swap {
     padding: 0.35rem 0;
   }
@@ -793,17 +785,12 @@ body[data-page="2"] .bg-layer-2 {
   .field-row input {
     min-height: 48px;
     padding: 0.75rem 1rem;
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   #pace-km,
   #speed-kmh {
     font-size: 1.5rem;
-  }
-
-  .pill-header {
-    grid-template-columns: 1rem 1fr 1fr;
-    padding: 0 0.75rem 0.65rem;
   }
 
   .workout-row {

@@ -271,9 +271,25 @@ function formatSecondsToFinishTime(seconds) {
 
 function formatPaceInputValue(value) {
   let formatted = value.replace(/[^\d:]/g, "");
-  if (formatted.length >= 3 && !formatted.includes(":")) {
-    formatted = `${formatted.substring(0, formatted.length - 2)}:${formatted.substring(formatted.length - 2)}`;
+
+  if (formatted.includes(":")) {
+    const parts = formatted.split(":");
+    let mins = parts[0];
+    let secs = parts[1];
+
+    if (mins.length > 2) mins = mins.substring(0, 2);
+    if (secs.length > 2) secs = secs.substring(0, 2);
+
+    formatted = `${mins}:${secs}`;
+  } else {
+    if (formatted.length > 4) {
+      formatted = formatted.substring(0, 4);
+    }
+    if (formatted.length >= 3) {
+      formatted = `${formatted.substring(0, formatted.length - 2)}:${formatted.substring(formatted.length - 2)}`;
+    }
   }
+
   return formatted;
 }
 
@@ -523,7 +539,7 @@ function updateWorkoutSummary() {
   );
 
   if (filledRows.length === 0) {
-    avgPaceEl.textContent = "--:--";
+    avgPaceEl.textContent = "--:-- /km";
     avgSpeedEl.textContent = "--.- km/h";
     return;
   }
@@ -535,14 +551,32 @@ function updateWorkoutSummary() {
   const avgSecPerKm = totalSeconds / filledRows.length;
   const avgSpeed = 3600 / avgSecPerKm;
 
-  avgPaceEl.textContent = formatSecondsToPace(avgSecPerKm);
+  avgPaceEl.textContent = `${formatSecondsToPace(avgSecPerKm)} /km`;
   avgSpeedEl.textContent = `${avgSpeed.toFixed(1)} km/h`;
 }
 
 function attachWorkoutInputHandlers() {
   if (workoutPaceInputs.length === 0) return;
 
+  let isNavigatingWithEnter = false;
+
   workoutPaceInputs.forEach((input) => {
+    input.addEventListener("focus", (event) => {
+      if (isNavigatingWithEnter) {
+        isNavigatingWithEnter = false;
+        return;
+      }
+
+      event.target.value = "";
+      const rowId = Number(event.target.id.split("-").pop());
+      const row = structuredWorkoutRows.find((item) => item.id === rowId);
+      if (row) {
+        row.pace = "";
+        row.speed = "";
+        updateWorkoutRowSpeed(rowId);
+      }
+    });
+
     input.addEventListener("input", (event) => {
       const rowId = Number(event.target.id.split("-").pop());
       const formattedPace = formatPaceInputValue(event.target.value);
@@ -572,7 +606,46 @@ function attachWorkoutInputHandlers() {
       }
     });
 
-    input.addEventListener("keydown", handleEnterBlur);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const currentRowId = Number(event.target.id.split("-").pop());
+
+        if (
+          event.target.value &&
+          parsePaceToSeconds(event.target.value) === null
+        ) {
+          event.target.value = "";
+          const row = structuredWorkoutRows.find(
+            (item) => item.id === currentRowId,
+          );
+          if (row) {
+            row.pace = "";
+            row.speed = "";
+            updateWorkoutRowSpeed(currentRowId);
+          }
+          return;
+        }
+
+        if (currentRowId < 4) {
+          const nextRowId = currentRowId + 1;
+
+          if (nextRowId <= visibleWorkoutRows) {
+            const nextInput = document.getElementById(
+              `page-workout-pace-${nextRowId}`,
+            );
+            if (nextInput) {
+              isNavigatingWithEnter = true;
+              nextInput.focus();
+            }
+          } else {
+            event.target.blur();
+          }
+        } else {
+          event.target.blur();
+        }
+      }
+    });
   });
 
   if (!addWorkoutRowButton) return;
@@ -664,7 +737,6 @@ function attachConverterHandlers() {
   });
   finishTimeFullInput.addEventListener("keydown", handleEnterBlur);
 }
-
 
 attachSwipeHandlers();
 applyPageStyle();

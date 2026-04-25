@@ -40,7 +40,9 @@
             <div class="card-inner">
               <header class="card-header">
                 <h1>Pace Converter</h1>
-                <p class="card-subtitle">Convert pace, speed, and race times</p>
+                <p class="card-subtitle">
+                  Convert pace, speed, and finish time
+                </p>
               </header>
 
               <section class="card-body converter-box">
@@ -150,114 +152,106 @@
                   <span class="pill-header-speed">Speed</span>
                 </div>
 
-                <div class="workout-content">
-                  <article class="workout-row" data-row-id="1">
-                    <span class="pill-num">1</span>
-                    <div class="pill-pace">
-                      <label class="sr-only" for="page-workout-pace-1"
-                        >STEP 1 pace</label
-                      >
-                      <input
-                        type="text"
-                        id="page-workout-pace-1"
-                        class="workout-pace-input"
-                        placeholder="6:10"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                    <div class="pill-speed" aria-live="polite">
-                      <span
-                        id="page-workout-speed-1"
-                        class="speed-chip-value"
-                        data-speed-for="1"
-                        >--</span
-                      >
-                    </div>
-                  </article>
-
-                  <article class="workout-row" data-row-id="2">
-                    <span class="pill-num">2</span>
-                    <div class="pill-pace">
-                      <label class="sr-only" for="page-workout-pace-2"
-                        >STEP 2 pace</label
-                      >
-                      <input
-                        type="text"
-                        id="page-workout-pace-2"
-                        class="workout-pace-input"
-                        placeholder="5:30"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                    <div class="pill-speed" aria-live="polite">
-                      <span class="speed-chip-value" data-speed-for="2"
-                        >--</span
-                      >
-                    </div>
-                  </article>
-
-                  <article class="workout-row" data-row-id="3">
-                    <span class="pill-num">3</span>
-                    <div class="pill-pace">
-                      <label class="sr-only" for="page-workout-pace-3"
-                        >STEP 3 pace</label
-                      >
-                      <input
-                        type="text"
-                        id="page-workout-pace-3"
-                        class="workout-pace-input"
-                        placeholder="4:40"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                    <div class="pill-speed" aria-live="polite">
-                      <span class="speed-chip-value" data-speed-for="3"
-                        >--</span
-                      >
-                    </div>
-                  </article>
-
-                  <article class="workout-row is-hidden" data-row-id="4">
-                    <span class="pill-num">4</span>
-                    <div class="pill-pace">
-                      <label class="sr-only" for="page-workout-pace-4"
-                        >STEP 4 pace</label
-                      >
-                      <input
-                        type="text"
-                        id="page-workout-pace-4"
-                        class="workout-pace-input"
-                        placeholder="7:00"
-                        autocomplete="off"
-                        inputmode="numeric"
-                      />
-                    </div>
-                    <div class="pill-speed" aria-live="polite">
-                      <span class="speed-chip-value" data-speed-for="4"
-                        >--</span
-                      >
-                    </div>
-                  </article>
-
-                  <button
-                    type="button"
-                    class="add-step-btn"
-                    id="add-workout-row"
-                    aria-controls="workout-rows"
-                    aria-label="Add one more workout stage"
-                  >
-                    + Add Step
-                  </button>
-
-                  <div class="workout-summary" id="workout-summary">
-                    <span class="summary-label">AVG</span>
-                    <span class="summary-pace" id="avg-pace">--:--</span>
-                    <span class="summary-divider"></span>
-                    <span class="summary-speed" id="avg-speed">--.- km/h</span>
+                <article class="workout-row" data-row-id="1">
+                  <span class="pill-num">1</span>
+                  <div class="pill-pace">
+                    <label class="sr-only" for="page-workout-pace-1"
+                      >STEP 1 pace</label
+                    >
+                    <input
+                      type="text"
+                      id="page-workout-pace-1"
+                      class="workout-pace-input"
+                      placeholder="6:10"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
                   </div>
+                  <div class="pill-speed" aria-live="polite">
+                    <span
+                      id="page-workout-speed-1"
+                      class="speed-chip-value"
+                      data-speed-for="1"
+                      >--</span
+                    >
+                  </div>
+                </article>
+
+                <article class="workout-row" data-row-id="2">
+                  <span class="pill-num">2</span>
+                  <div class="pill-pace">
+                    <label class="sr-only" for="page-workout-pace-2"
+                      >STEP 2 pace</label
+                    >
+                    <input
+                      type="text"
+                      id="page-workout-pace-2"
+                      class="workout-pace-input"
+                      placeholder="5:30"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <div class="pill-speed" aria-live="polite">
+                    <span class="speed-chip-value" data-speed-for="2">--</span>
+                  </div>
+                </article>
+
+                <article class="workout-row" data-row-id="3">
+                  <span class="pill-num">3</span>
+                  <div class="pill-pace">
+                    <label class="sr-only" for="page-workout-pace-3"
+                      >STEP 3 pace</label
+                    >
+                    <input
+                      type="text"
+                      id="page-workout-pace-3"
+                      class="workout-pace-input"
+                      placeholder="4:40"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <div class="pill-speed" aria-live="polite">
+                    <span class="speed-chip-value" data-speed-for="3">--</span>
+                  </div>
+                </article>
+
+                <article class="workout-row is-hidden" data-row-id="4">
+                  <span class="pill-num">4</span>
+                  <div class="pill-pace">
+                    <label class="sr-only" for="page-workout-pace-4"
+                      >STEP 4 pace</label
+                    >
+                    <input
+                      type="text"
+                      id="page-workout-pace-4"
+                      class="workout-pace-input"
+                      placeholder="7:00"
+                      autocomplete="off"
+                      inputmode="numeric"
+                    />
+                  </div>
+                  <div class="pill-speed" aria-live="polite">
+                    <span class="speed-chip-value" data-speed-for="4">--</span>
+                  </div>
+                </article>
+
+                <button
+                  type="button"
+                  class="add-step-btn"
+                  id="add-workout-row"
+                  aria-controls="workout-rows"
+                  aria-label="Add one more workout stage"
+                >
+                  + Add Step
+                </button>
+
+                <div class="workout-summary" id="workout-summary">
+                  <span class="summary-label">AVG</span>
+                  <span class="summary-pace" id="avg-pace">--:-- /km</span>
+                  <span class="summary-divider"></span>
+                  <span class="summary-speed" id="avg-speed">--.- km/h</span>
                 </div>
               </section>
               <footer class="card-footer">
@@ -272,7 +266,7 @@
             <div class="card-inner">
               <header class="card-header">
                 <h1>Next Race</h1>
-                <p class="card-subtitle">Best record, and your next</p>
+                <p class="card-subtitle">PB & Beyond</p>
               </header>
               <section>
                 <!--3번째 카드 메인 내용-->
@@ -311,4 +305,3 @@
     <script src="script.js"></script>
   </body>
 </html>
-~
