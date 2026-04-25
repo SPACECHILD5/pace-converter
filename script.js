@@ -344,7 +344,10 @@ function normalizeFinishTimeOnBlur(input, minDigits) {
   if (colons === 0 && digits.length === 2 && minDigits <= 2) {
     nextValue = `${digits}:00`;
   } else if (colons === 1) {
-    nextValue = `${value}:00`;
+    const firstPart = parseInt(value.split(":")[0], 10);
+    if (!isNaN(firstPart) && firstPart < 10) {
+      nextValue = `${value}:00`;
+    }
   }
 
   if (nextValue !== value) {
