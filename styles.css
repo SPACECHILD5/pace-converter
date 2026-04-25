@@ -280,14 +280,32 @@ body[data-page="2"] .bg-layer-2 {
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.card-body::-webkit-scrollbar {
+  display: none;
+}
+
+.card-body > :first-child {
+  margin-top: auto;
+}
+
+.card-body > :last-child {
+  margin-bottom: auto;
 }
 
 .converter-box {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: clamp(12px, 2.5vh, 24px);
+  justify-content: flex-start;
+  gap: clamp(8px, 1.5vh, 16px);
   height: 100%;
   min-height: 0;
 }
@@ -295,7 +313,7 @@ body[data-page="2"] .bg-layer-2 {
 .workout-box {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100%;
   min-height: 0;
 }
@@ -319,7 +337,7 @@ body[data-page="2"] .bg-layer-2 {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: clamp(4px, 1vh, 8px);
 }
 
 .field label {
@@ -333,7 +351,9 @@ body[data-page="2"] .bg-layer-2 {
 
 .field input {
   width: 100%;
-  min-height: 52px;
+  height: 52px;
+  min-height: 44px;
+  flex-shrink: 1;
   padding: 0.85rem 1.1rem;
   border: 1px solid var(--border-color);
   border-radius: 16px;
@@ -386,7 +406,7 @@ body[data-page="2"] .bg-layer-2 {
 
 .divider {
   height: 1px;
-  margin: 1rem 0;
+  margin: clamp(0.5rem, 1.5vh, 1rem) 0;
   background: var(--border-strong);
   opacity: 0.6;
 }
@@ -398,7 +418,9 @@ body[data-page="2"] .bg-layer-2 {
 }
 
 .field-row input {
-  min-height: 44px;
+  height: 44px;
+  min-height: 38px;
+  flex-shrink: 1;
   padding: 0.65rem 0.9rem;
   font-size: 0.9rem;
 }
@@ -443,10 +465,9 @@ body[data-page="2"] .bg-layer-2 {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
   padding-top: 0.4rem;
-  overflow: hidden;
 }
 
 /* Column headers */
@@ -651,7 +672,7 @@ body[data-page="2"] .bg-layer-2 {
 .summary-pace,
 .summary-speed {
   color: rgba(255, 255, 255, 0.88);
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -787,7 +808,6 @@ body[data-page="2"] .bg-layer-2 {
 
   .workout-row {
     grid-template-columns: 1rem 1fr 1fr;
-    padding: 0.55rem 0.75rem;
     border-radius: 16px;
   }
 
@@ -799,13 +819,7 @@ body[data-page="2"] .bg-layer-2 {
   }
 
   .pill-pace input {
-    padding: 0.65rem 0.85rem;
     font-size: 1.05rem;
-  }
-
-  .pill-speed {
-    min-height: 42px;
-    padding: 0.65rem 0.85rem;
   }
 
   .speed-chip-value {
