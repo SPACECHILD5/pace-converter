@@ -140,16 +140,17 @@
             <div class="card-inner">
               <header class="card-header">
                 <h1>Structured Workout</h1>
-                <p class="card-subtitle">Planning a multi-step workout?</p>
+                <p class="card-subtitle">Build a multi-step run</p>
               </header>
 
               <section class="card-body workout-box">
                 <div class="pill-header" aria-hidden="true">
+                  <span></span>
                   <span class="pill-header-pace">Pace</span>
                   <span class="pill-header-speed">Speed</span>
                 </div>
 
-                <div class="workout-rows" id="workout-rows">
+                <div class="workout-content">
                   <article class="workout-row" data-row-id="1">
                     <span class="pill-num">1</span>
                     <div class="pill-pace">
@@ -160,7 +161,7 @@
                         type="text"
                         id="page-workout-pace-1"
                         class="workout-pace-input"
-                        placeholder="5:30"
+                        placeholder="6:10"
                         autocomplete="off"
                         inputmode="numeric"
                       />
@@ -185,7 +186,7 @@
                         type="text"
                         id="page-workout-pace-2"
                         class="workout-pace-input"
-                        placeholder="5:10"
+                        placeholder="5:30"
                         autocomplete="off"
                         inputmode="numeric"
                       />
@@ -229,7 +230,7 @@
                         type="text"
                         id="page-workout-pace-4"
                         class="workout-pace-input"
-                        placeholder="6:15"
+                        placeholder="7:00"
                         autocomplete="off"
                         inputmode="numeric"
                       />
@@ -240,23 +241,23 @@
                       >
                     </div>
                   </article>
-                </div>
 
-                <button
-                  type="button"
-                  class="add-step-btn"
-                  id="add-workout-row"
-                  aria-controls="workout-rows"
-                  aria-label="Add one more workout stage"
-                >
-                  + Add Step
-                </button>
+                  <button
+                    type="button"
+                    class="add-step-btn"
+                    id="add-workout-row"
+                    aria-controls="workout-rows"
+                    aria-label="Add one more workout stage"
+                  >
+                    + Add Step
+                  </button>
 
-                <div class="workout-summary" id="workout-summary">
-                  <span class="summary-label">AVG</span>
-                  <span class="summary-pace" id="avg-pace">--:--</span>
-                  <span class="summary-divider"></span>
-                  <span class="summary-speed" id="avg-speed">--.- km/h</span>
+                  <div class="workout-summary" id="workout-summary">
+                    <span class="summary-label">AVG</span>
+                    <span class="summary-pace" id="avg-pace">--:--</span>
+                    <span class="summary-divider"></span>
+                    <span class="summary-speed" id="avg-speed">--.- km/h</span>
+                  </div>
                 </div>
               </section>
               <footer class="card-footer">

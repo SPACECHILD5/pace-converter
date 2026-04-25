@@ -497,7 +497,7 @@ function updateWorkoutRowVisibility() {
     row.classList.toggle("is-hidden", isHidden);
     row.setAttribute("aria-hidden", String(isHidden));
   });
-  addWorkoutRowButton.disabled = visibleWorkoutRows >= 4;
+  addWorkoutRowButton.classList.toggle("is-hidden", visibleWorkoutRows >= 4);
   if (workoutBox) {
     workoutBox.classList.toggle("is-compact", visibleWorkoutRows >= 4);
     workoutBox.dataset.rowCount = String(visibleWorkoutRows);
