@@ -271,25 +271,16 @@ function formatSecondsToFinishTime(seconds) {
 
 function formatPaceInputValue(value) {
   let formatted = value.replace(/[^\d:]/g, "");
-
-  if (formatted.includes(":")) {
-    const parts = formatted.split(":");
-    let mins = parts[0];
-    let secs = parts[1];
-
-    if (mins.length > 2) mins = mins.substring(0, 2);
-    if (secs.length > 2) secs = secs.substring(0, 2);
-
-    formatted = `${mins}:${secs}`;
+  const digits = formatted.replace(/:/g, "");
+  
+  const cappedDigits = digits.length > 4 ? digits.substring(0, 4) : digits;
+  
+  if (cappedDigits.length >= 3) {
+    formatted = `${cappedDigits.substring(0, cappedDigits.length - 2)}:${cappedDigits.substring(cappedDigits.length - 2)}`;
   } else {
-    if (formatted.length > 4) {
-      formatted = formatted.substring(0, 4);
-    }
-    if (formatted.length >= 3) {
-      formatted = `${formatted.substring(0, formatted.length - 2)}:${formatted.substring(formatted.length - 2)}`;
-    }
+    formatted = cappedDigits;
   }
-
+  
   return formatted;
 }
 
