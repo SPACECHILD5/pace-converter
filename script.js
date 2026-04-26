@@ -19,10 +19,7 @@ const workoutBox = document.querySelector(".workout-box");
 const DISTANCE_10K = 10.0;
 const DISTANCE_HALF = 21.0975;
 const DISTANCE_FULL = 42.195;
-
-const converterState = {
-  activeField: null,
-};
+const MAX_SPEED_KMH = 30;
 
 const structuredWorkoutRows = [
   { id: 1, pace: "", speed: "" },
@@ -78,7 +75,7 @@ function applyPageStyle() {
   updateDots();
 }
 
-function goTo(index) {
+function goToPage(index) {
   currentPage = Math.max(0, Math.min(index, pages.length - 1));
   carouselTrack.style.transition =
     "transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)";
@@ -158,7 +155,7 @@ function onEnd() {
   isDragging = false;
 
   if (blockSwipe || axisLocked !== "x") {
-    goTo(currentPage);
+    goToPage(currentPage);
     return;
   }
 
@@ -171,7 +168,7 @@ function onEnd() {
     currentPage -= 1;
   }
 
-  goTo(currentPage);
+  goToPage(currentPage);
 }
 
 function attachSwipeHandlers() {
@@ -205,11 +202,11 @@ function attachSwipeHandlers() {
   });
 
   window.addEventListener("mouseup", onEnd);
-  window.addEventListener("resize", () => goTo(currentPage));
+  window.addEventListener("resize", () => goToPage(currentPage));
 
   dots.forEach((dot) => {
     dot.addEventListener("click", () => {
-      goTo(Number(dot.dataset.index));
+      goToPage(Number(dot.dataset.index));
     });
   });
 }
@@ -223,6 +220,26 @@ function parsePaceToSeconds(paceStr) {
 
   if (isNaN(min) || isNaN(sec) || sec >= 60 || sec < 0) return null;
   return min * 60 + sec;
+}
+
+function secondsPerKmToSpeed(secPerKm) {
+  if (!secPerKm || secPerKm <= 0) return null;
+  return 3600 / secPerKm;
+}
+
+function speedToSecondsPerKm(speedKmh) {
+  if (!(speedKmh > 0 && speedKmh <= MAX_SPEED_KMH)) return null;
+  return 3600 / speedKmh;
+}
+
+function finishTimeToSecondsPerKm(totalSeconds, distanceKm) {
+  if (!totalSeconds || totalSeconds <= 0 || !distanceKm) return null;
+  return totalSeconds / distanceKm;
+}
+
+function secondsPerKmToFinishTime(secPerKm, distanceKm) {
+  if (!secPerKm || secPerKm <= 0 || !distanceKm) return null;
+  return secPerKm * distanceKm;
 }
 
 function formatSecondsToPace(seconds) {
@@ -269,18 +286,23 @@ function formatSecondsToFinishTime(seconds) {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
+function formatSpeed(speedKmh) {
+  if (!speedKmh || speedKmh <= 0) return "";
+  return speedKmh.toFixed(1);
+}
+
 function formatPaceInputValue(value) {
   let formatted = value.replace(/[^\d:]/g, "");
   const digits = formatted.replace(/:/g, "");
-  
+
   const cappedDigits = digits.length > 4 ? digits.substring(0, 4) : digits;
-  
+
   if (cappedDigits.length >= 3) {
     formatted = `${cappedDigits.substring(0, cappedDigits.length - 2)}:${cappedDigits.substring(cappedDigits.length - 2)}`;
   } else {
     formatted = cappedDigits;
   }
-  
+
   return formatted;
 }
 
@@ -302,8 +324,8 @@ function formatSpeedInputValue(value) {
   }
 
   const speed = parseFloat(formatted);
-  if (!isNaN(speed) && speed > 30) {
-    return "30.0";
+  if (!isNaN(speed) && speed > MAX_SPEED_KMH) {
+    return formatSpeed(MAX_SPEED_KMH);
   }
 
   return formatted;
@@ -352,7 +374,7 @@ function normalizeFinishTimeOnBlur(input, minDigits) {
 function calculateSpeedFromPace(paceStr) {
   const secPerKm = parsePaceToSeconds(paceStr);
   if (!secPerKm) return "";
-  return (3600 / secPerKm).toFixed(1);
+  return formatSpeed(secondsPerKmToSpeed(secPerKm));
 }
 
 function clearConverterFields(exceptInput) {
@@ -376,13 +398,15 @@ function syncFromPace() {
     return;
   }
 
-  speedInput.value = (3600 / secPerKm).toFixed(1);
-  finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
+  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
+  finishTime10kInput.value = formatSecondsToFinishTime(
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
+  );
   finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_HALF,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
   );
   finishTimeFullInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_FULL,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
   );
 }
 
@@ -394,19 +418,21 @@ function syncFromSpeed() {
   }
 
   const speed = parseFloat(speedStr);
-  if (!(speed > 0 && speed <= 30)) {
+  const secPerKm = speedToSecondsPerKm(speed);
+  if (!secPerKm) {
     clearConverterFields(speedInput);
     return;
   }
 
-  const secPerKm = 3600 / speed;
   paceInput.value = formatSecondsToPace(secPerKm);
-  finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
+  finishTime10kInput.value = formatSecondsToFinishTime(
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
+  );
   finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_HALF,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
   );
   finishTimeFullInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_FULL,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
   );
 }
 
@@ -419,14 +445,14 @@ function syncFromFinishTime10k() {
     return;
   }
 
-  const secPerKm = totalSeconds / DISTANCE_10K;
+  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_10K);
   paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = (3600 / secPerKm).toFixed(1);
+  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
   finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_HALF,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
   );
   finishTimeFullInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_FULL,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
   );
 }
 
@@ -439,12 +465,14 @@ function syncFromFinishTimeHalf() {
     return;
   }
 
-  const secPerKm = totalSeconds / DISTANCE_HALF;
+  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_HALF);
   paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = (3600 / secPerKm).toFixed(1);
-  finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
+  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
+  finishTime10kInput.value = formatSecondsToFinishTime(
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
+  );
   finishTimeFullInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_FULL,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
   );
 }
 
@@ -457,17 +485,18 @@ function syncFromFinishTimeFull() {
     return;
   }
 
-  const secPerKm = totalSeconds / DISTANCE_FULL;
+  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_FULL);
   paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = (3600 / secPerKm).toFixed(1);
-  finishTime10kInput.value = formatSecondsToFinishTime(secPerKm * DISTANCE_10K);
+  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
+  finishTime10kInput.value = formatSecondsToFinishTime(
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
+  );
   finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secPerKm * DISTANCE_HALF,
+    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
   );
 }
 
 function handleConverterFocus(event) {
-  converterState.activeField = event.target.id;
   event.target.value = "";
   clearConverterFields(null);
 }
@@ -487,7 +516,7 @@ function handleSpeedBlur(event) {
 
   const speed = parseFloat(value);
   if (!isNaN(speed) && speed > 0) {
-    event.target.value = speed.toFixed(1);
+    event.target.value = formatSpeed(speed);
   } else {
     event.target.value = "";
     clearConverterFields(speedInput);
@@ -543,10 +572,10 @@ function updateWorkoutSummary() {
     0,
   );
   const avgSecPerKm = totalSeconds / filledRows.length;
-  const avgSpeed = 3600 / avgSecPerKm;
+  const avgSpeed = secondsPerKmToSpeed(avgSecPerKm);
 
   avgPaceEl.textContent = `${formatSecondsToPace(avgSecPerKm)} /km`;
-  avgSpeedEl.textContent = `${avgSpeed.toFixed(1)} km/h`;
+  avgSpeedEl.textContent = `${formatSpeed(avgSpeed)} km/h`;
 }
 
 function attachWorkoutInputHandlers() {
