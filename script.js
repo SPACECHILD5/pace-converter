@@ -11,167 +11,195 @@ const dots = document.querySelectorAll(".dot");
 
 const addWorkoutRowButton = document.getElementById("add-workout-row");
 const workoutRows = Array.from(document.querySelectorAll(".workout-row"));
-const workoutPaceInputs = Array.from(
-  document.querySelectorAll(".workout-pace-input"),
-);
 const workoutBox = document.querySelector(".workout-box");
+const avgPaceEl = document.getElementById("avg-pace");
+const avgSpeedEl = document.getElementById("avg-speed");
 
 const DISTANCE_10K = 10.0;
 const DISTANCE_HALF = 21.0975;
 const DISTANCE_FULL = 42.195;
 const MAX_SPEED_KMH = 30;
+const MAX_PACE_SECONDS = 20 * 60;
+const DEFAULT_VISIBLE_WORKOUT_ROWS = 3;
 
-const structuredWorkoutRows = [
-  { id: 1, pace: "", speed: "" },
-  { id: 2, pace: "", speed: "" },
-  { id: 3, pace: "", speed: "" },
-  { id: 4, pace: "", speed: "" },
+const finishTimeFields = [
+  { input: finishTime10kInput, distanceKm: DISTANCE_10K, minDigits: 2 },
+  { input: finishTimeHalfInput, distanceKm: DISTANCE_HALF, minDigits: 2 },
+  { input: finishTimeFullInput, distanceKm: DISTANCE_FULL, minDigits: 3 },
 ];
 
-let visibleWorkoutRows = 3;
+const workoutSteps = workoutRows.map((row) => {
+  const id = Number(row.dataset.rowId);
+  return {
+    id,
+    row,
+    input: row.querySelector(".workout-pace-input"),
+    output: row.querySelector(`[data-speed-for="${id}"]`),
+    secPerKm: null,
+  };
+});
 
-let currentPage = 0;
-let startX = 0;
-let startY = 0;
-let currentX = 0;
-let isDragging = false;
-let axisLocked = null;
-let blockSwipe = false;
+let visibleWorkoutRows = Math.min(
+  DEFAULT_VISIBLE_WORKOUT_ROWS,
+  workoutSteps.length,
+);
 
 const EDGE_GUARD = 24;
 const LOCK_THRESHOLD = 8;
 const SWIPE_THRESHOLD = 0.18;
 const SWIPE_BLOCK_SELECTOR = "input, select, button, a, textarea, label";
 
-function isSwipeBlockedTarget(target) {
-  return (
-    target instanceof Element && Boolean(target.closest(SWIPE_BLOCK_SELECTOR))
-  );
-}
+function initCarousel() {
+  if (!carouselEl || !carouselTrack || pages.length === 0) return;
 
-function updateDots() {
-  dots.forEach((dot, index) => {
-    dot.classList.toggle("active", index === currentPage);
-  });
-}
+  let currentPage = 0;
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let isDragging = false;
+  let axisLocked = null;
+  let blockSwipe = false;
 
-function applyPageStyle() {
-  document.body.dataset.page = currentPage;
+  function isSwipeBlockedTarget(target) {
+    return (
+      target instanceof Element && Boolean(target.closest(SWIPE_BLOCK_SELECTOR))
+    );
+  }
 
-  pages.forEach((page, index) => {
-    if (index === currentPage) {
-      page.style.transform = "rotateY(0deg) scale(1)";
-      page.style.opacity = "1";
-    } else if (index < currentPage) {
-      page.style.transform = "rotateY(18deg) scale(0.95)";
-      page.style.opacity = "0.42";
-    } else {
-      page.style.transform = "rotateY(-18deg) scale(0.95)";
-      page.style.opacity = "0.42";
+  function updateDots() {
+    dots.forEach((dot, index) => {
+      const isActive = index === currentPage;
+      dot.classList.toggle("active", isActive);
+      if (isActive) {
+        dot.setAttribute("aria-current", "page");
+      } else {
+        dot.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  function applyPageStyle() {
+    document.body.dataset.page = currentPage;
+
+    pages.forEach((page, index) => {
+      if (index === currentPage) {
+        page.style.transform = "rotateY(0deg) scale(1)";
+        page.style.opacity = "1";
+        page.setAttribute("aria-hidden", "false");
+      } else if (index < currentPage) {
+        page.style.transform = "rotateY(18deg) scale(0.95)";
+        page.style.opacity = "0.42";
+        page.setAttribute("aria-hidden", "true");
+      } else {
+        page.style.transform = "rotateY(-18deg) scale(0.95)";
+        page.style.opacity = "0.42";
+        page.setAttribute("aria-hidden", "true");
+      }
+    });
+
+    carouselTrack.style.transform = `translate3d(-${currentPage * window.innerWidth}px, 0, 0)`;
+    updateDots();
+  }
+
+  function goToPage(index) {
+    currentPage = Math.max(0, Math.min(index, pages.length - 1));
+    carouselTrack.style.transition =
+      "transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)";
+    pages.forEach((page) => {
+      page.style.transition =
+        "transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease";
+    });
+    applyPageStyle();
+  }
+
+  function onStart(x, y, target) {
+    const viewportWidth = window.innerWidth;
+    blockSwipe =
+      isSwipeBlockedTarget(target) ||
+      x <= EDGE_GUARD ||
+      x >= viewportWidth - EDGE_GUARD;
+    isDragging = !blockSwipe;
+    axisLocked = null;
+    startX = x;
+    startY = y;
+    currentX = x;
+
+    if (blockSwipe) return;
+
+    carouselTrack.style.transition = "none";
+    pages.forEach((page) => {
+      page.style.transition = "none";
+    });
+  }
+
+  function onMove(x, y, event) {
+    if (!isDragging || blockSwipe) return;
+
+    currentX = x;
+    const diffX = currentX - startX;
+    const diffY = y - startY;
+
+    if (!axisLocked) {
+      if (
+        Math.abs(diffX) < LOCK_THRESHOLD &&
+        Math.abs(diffY) < LOCK_THRESHOLD
+      ) {
+        return;
+      }
+      axisLocked = Math.abs(diffX) > Math.abs(diffY) ? "x" : "y";
     }
-  });
 
-  carouselTrack.style.transform = `translate3d(-${currentPage * window.innerWidth}px, 0, 0)`;
-  updateDots();
-}
+    if (axisLocked === "y") return;
+    if (event && event.cancelable) event.preventDefault();
 
-function goToPage(index) {
-  currentPage = Math.max(0, Math.min(index, pages.length - 1));
-  carouselTrack.style.transition =
-    "transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)";
-  pages.forEach((page) => {
-    page.style.transition =
-      "transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease";
-  });
-  applyPageStyle();
-}
+    const baseX = -currentPage * window.innerWidth;
+    let moveX = baseX + diffX;
 
-function onStart(x, y, target) {
-  const viewportWidth = window.innerWidth;
-  blockSwipe =
-    isSwipeBlockedTarget(target) ||
-    x <= EDGE_GUARD ||
-    x >= viewportWidth - EDGE_GUARD;
-  isDragging = !blockSwipe;
-  axisLocked = null;
-  startX = x;
-  startY = y;
-  currentX = x;
+    if (
+      (currentPage === 0 && diffX > 0) ||
+      (currentPage === pages.length - 1 && diffX < 0)
+    ) {
+      moveX = baseX + diffX * 0.34;
+    }
 
-  if (blockSwipe) return;
+    carouselTrack.style.transform = `translate3d(${moveX}px, 0, 0)`;
 
-  carouselTrack.style.transition = "none";
-  pages.forEach((page) => {
-    page.style.transition = "none";
-  });
-}
+    const rotateAmount = Math.max(-24, Math.min(24, diffX / 8));
+    pages.forEach((page, index) => {
+      if (index === currentPage) {
+        page.style.transform = `rotateY(${rotateAmount * 0.28}deg) scale(0.985)`;
+        page.style.opacity = "1";
+      } else if (index === currentPage - 1) {
+        page.style.transform = `rotateY(${18 + rotateAmount * 0.16}deg) scale(0.95)`;
+        page.style.opacity = "0.45";
+      } else if (index === currentPage + 1) {
+        page.style.transform = `rotateY(${-18 + rotateAmount * 0.16}deg) scale(0.95)`;
+        page.style.opacity = "0.45";
+      }
+    });
+  }
 
-function onMove(x, y, event) {
-  if (!isDragging || blockSwipe) return;
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
 
-  currentX = x;
-  const diffX = currentX - startX;
-  const diffY = y - startY;
-
-  if (!axisLocked) {
-    if (Math.abs(diffX) < LOCK_THRESHOLD && Math.abs(diffY) < LOCK_THRESHOLD) {
+    if (blockSwipe || axisLocked !== "x") {
+      goToPage(currentPage);
       return;
     }
-    axisLocked = Math.abs(diffX) > Math.abs(diffY) ? "x" : "y";
-  }
 
-  if (axisLocked === "y") return;
-  if (event && event.cancelable) event.preventDefault();
+    const diff = currentX - startX;
+    const threshold = window.innerWidth * SWIPE_THRESHOLD;
 
-  const baseX = -currentPage * window.innerWidth;
-  let moveX = baseX + diffX;
-
-  if (
-    (currentPage === 0 && diffX > 0) ||
-    (currentPage === pages.length - 1 && diffX < 0)
-  ) {
-    moveX = baseX + diffX * 0.34;
-  }
-
-  carouselTrack.style.transform = `translate3d(${moveX}px, 0, 0)`;
-
-  const rotateAmount = Math.max(-24, Math.min(24, diffX / 8));
-  pages.forEach((page, index) => {
-    if (index === currentPage) {
-      page.style.transform = `rotateY(${rotateAmount * 0.28}deg) scale(0.985)`;
-      page.style.opacity = "1";
-    } else if (index === currentPage - 1) {
-      page.style.transform = `rotateY(${18 + rotateAmount * 0.16}deg) scale(0.95)`;
-      page.style.opacity = "0.45";
-    } else if (index === currentPage + 1) {
-      page.style.transform = `rotateY(${-18 + rotateAmount * 0.16}deg) scale(0.95)`;
-      page.style.opacity = "0.45";
+    if (diff < -threshold && currentPage < pages.length - 1) {
+      currentPage += 1;
+    } else if (diff > threshold && currentPage > 0) {
+      currentPage -= 1;
     }
-  });
-}
 
-function onEnd() {
-  if (!isDragging) return;
-  isDragging = false;
-
-  if (blockSwipe || axisLocked !== "x") {
     goToPage(currentPage);
-    return;
   }
 
-  const diff = currentX - startX;
-  const threshold = window.innerWidth * SWIPE_THRESHOLD;
-
-  if (diff < -threshold && currentPage < pages.length - 1) {
-    currentPage += 1;
-  } else if (diff > threshold && currentPage > 0) {
-    currentPage -= 1;
-  }
-
-  goToPage(currentPage);
-}
-
-function attachSwipeHandlers() {
   carouselEl.addEventListener(
     "touchstart",
     (event) => {
@@ -209,17 +237,29 @@ function attachSwipeHandlers() {
       goToPage(Number(dot.dataset.index));
     });
   });
+
+  applyPageStyle();
 }
 
-function parsePaceToSeconds(paceStr) {
+function getPaceParts(paceStr) {
   const parts = paceStr.split(":");
   if (parts.length !== 2) return null;
 
   const min = parseInt(parts[0], 10);
   const sec = parseInt(parts[1], 10);
 
-  if (isNaN(min) || isNaN(sec) || sec >= 60 || sec < 0) return null;
-  return min * 60 + sec;
+  if (isNaN(min) || isNaN(sec) || min < 0 || sec < 0) return null;
+  return { min, sec };
+}
+
+function parsePaceToSeconds(paceStr) {
+  const paceParts = getPaceParts(paceStr);
+  if (!paceParts || paceParts.sec >= 60) return null;
+
+  const totalSeconds = paceParts.min * 60 + paceParts.sec;
+  if (totalSeconds > MAX_PACE_SECONDS) return null;
+
+  return totalSeconds;
 }
 
 function secondsPerKmToSpeed(secPerKm) {
@@ -303,6 +343,14 @@ function formatPaceInputValue(value) {
     formatted = cappedDigits;
   }
 
+  const paceParts = getPaceParts(formatted);
+  if (paceParts) {
+    const totalSeconds = paceParts.min * 60 + paceParts.sec;
+    if (paceParts.sec >= 60 || totalSeconds > MAX_PACE_SECONDS) {
+      return formatSecondsToPace(MAX_PACE_SECONDS);
+    }
+  }
+
   return formatted;
 }
 
@@ -371,18 +419,49 @@ function normalizeFinishTimeOnBlur(input, minDigits) {
   return false;
 }
 
-function calculateSpeedFromPace(paceStr) {
-  const secPerKm = parsePaceToSeconds(paceStr);
-  if (!secPerKm) return "";
-  return formatSpeed(secondsPerKmToSpeed(secPerKm));
+function getWorkoutStep(rowId) {
+  return workoutSteps.find((step) => step.id === rowId);
+}
+
+function getWorkoutRowId(input) {
+  const row = input.closest(".workout-row");
+  return row ? Number(row.dataset.rowId) : null;
+}
+
+function resetWorkoutStep(step) {
+  step.secPerKm = null;
+  if (step.input) step.input.value = "";
+  updateWorkoutRowSpeed(step.id);
 }
 
 function clearConverterFields(exceptInput) {
   if (exceptInput !== paceInput) paceInput.value = "";
   if (exceptInput !== speedInput) speedInput.value = "";
-  if (exceptInput !== finishTime10kInput) finishTime10kInput.value = "";
-  if (exceptInput !== finishTimeHalfInput) finishTimeHalfInput.value = "";
-  if (exceptInput !== finishTimeFullInput) finishTimeFullInput.value = "";
+  finishTimeFields.forEach(({ input }) => {
+    if (exceptInput !== input) input.value = "";
+  });
+}
+
+function renderConverterFromSecondsPerKm(secPerKm, sourceInput) {
+  if (!secPerKm) {
+    clearConverterFields(sourceInput);
+    return;
+  }
+
+  if (sourceInput !== paceInput) {
+    paceInput.value = formatSecondsToPace(secPerKm);
+  }
+
+  if (sourceInput !== speedInput) {
+    speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
+  }
+
+  finishTimeFields.forEach(({ input, distanceKm }) => {
+    if (sourceInput === input) return;
+    input.value = formatSecondsToFinishTime(
+      secondsPerKmToFinishTime(secPerKm, distanceKm),
+    );
+  });
 }
 
 function syncFromPace() {
@@ -398,16 +477,7 @@ function syncFromPace() {
     return;
   }
 
-  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
-  finishTime10kInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
-  );
-  finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
-  );
-  finishTimeFullInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
-  );
+  renderConverterFromSecondsPerKm(secPerKm, paceInput);
 }
 
 function syncFromSpeed() {
@@ -424,76 +494,18 @@ function syncFromSpeed() {
     return;
   }
 
-  paceInput.value = formatSecondsToPace(secPerKm);
-  finishTime10kInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
-  );
-  finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
-  );
-  finishTimeFullInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
-  );
+  renderConverterFromSecondsPerKm(secPerKm, speedInput);
 }
 
-function syncFromFinishTime10k() {
-  const totalSeconds = parseFinishTimeToSeconds(
-    finishTime10kInput.value.trim(),
-  );
+function syncFromFinishTime(input, distanceKm) {
+  const totalSeconds = parseFinishTimeToSeconds(input.value.trim());
   if (!totalSeconds) {
-    clearConverterFields(finishTime10kInput);
+    clearConverterFields(input);
     return;
   }
 
-  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_10K);
-  paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
-  finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
-  );
-  finishTimeFullInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
-  );
-}
-
-function syncFromFinishTimeHalf() {
-  const totalSeconds = parseFinishTimeToSeconds(
-    finishTimeHalfInput.value.trim(),
-  );
-  if (!totalSeconds) {
-    clearConverterFields(finishTimeHalfInput);
-    return;
-  }
-
-  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_HALF);
-  paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
-  finishTime10kInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
-  );
-  finishTimeFullInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_FULL),
-  );
-}
-
-function syncFromFinishTimeFull() {
-  const totalSeconds = parseFinishTimeToSeconds(
-    finishTimeFullInput.value.trim(),
-  );
-  if (!totalSeconds) {
-    clearConverterFields(finishTimeFullInput);
-    return;
-  }
-
-  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, DISTANCE_FULL);
-  paceInput.value = formatSecondsToPace(secPerKm);
-  speedInput.value = formatSpeed(secondsPerKmToSpeed(secPerKm));
-  finishTime10kInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_10K),
-  );
-  finishTimeHalfInput.value = formatSecondsToFinishTime(
-    secondsPerKmToFinishTime(secPerKm, DISTANCE_HALF),
-  );
+  const secPerKm = finishTimeToSecondsPerKm(totalSeconds, distanceKm);
+  renderConverterFromSecondsPerKm(secPerKm, input);
 }
 
 function handleConverterFocus(event) {
@@ -531,35 +543,39 @@ function handleEnterBlur(event) {
 
 function updateWorkoutRowVisibility() {
   if (!addWorkoutRowButton) return;
-  workoutRows.forEach((row, index) => {
+  workoutSteps.forEach((step, index) => {
     const isHidden = index + 1 > visibleWorkoutRows;
-    row.classList.toggle("is-hidden", isHidden);
-    row.setAttribute("aria-hidden", String(isHidden));
+    step.row.classList.toggle("is-hidden", isHidden);
+    step.row.setAttribute("aria-hidden", String(isHidden));
   });
-  addWorkoutRowButton.classList.toggle("is-hidden", visibleWorkoutRows >= 4);
+  addWorkoutRowButton.classList.toggle(
+    "is-hidden",
+    visibleWorkoutRows >= workoutSteps.length,
+  );
   if (workoutBox) {
-    workoutBox.classList.toggle("is-compact", visibleWorkoutRows >= 4);
+    workoutBox.classList.toggle(
+      "is-compact",
+      visibleWorkoutRows >= workoutSteps.length,
+    );
     workoutBox.dataset.rowCount = String(visibleWorkoutRows);
   }
 }
 
 function updateWorkoutRowSpeed(rowId) {
-  const row = structuredWorkoutRows.find((item) => item.id === rowId);
-  const output = document.querySelector(`[data-speed-for="${rowId}"]`);
-  if (!row || !output) return;
-  output.textContent = row.speed || "--";
+  const step = getWorkoutStep(rowId);
+  if (!step || !step.output) return;
+
+  const speed = secondsPerKmToSpeed(step.secPerKm);
+  step.output.textContent = speed ? formatSpeed(speed) : "--";
   updateWorkoutSummary();
 }
 
 function updateWorkoutSummary() {
-  const avgPaceEl = document.getElementById("avg-pace");
-  const avgSpeedEl = document.getElementById("avg-speed");
   if (!avgPaceEl || !avgSpeedEl) return;
 
-  const visibleRows = structuredWorkoutRows.slice(0, visibleWorkoutRows);
-  const filledRows = visibleRows.filter(
-    (row) => row.pace && parsePaceToSeconds(row.pace) !== null,
-  );
+  const filledRows = workoutSteps
+    .slice(0, visibleWorkoutRows)
+    .filter((step) => step.secPerKm);
 
   if (filledRows.length === 0) {
     avgPaceEl.textContent = "--:-- /km";
@@ -568,7 +584,7 @@ function updateWorkoutSummary() {
   }
 
   const totalSeconds = filledRows.reduce(
-    (sum, row) => sum + parsePaceToSeconds(row.pace),
+    (sum, step) => sum + step.secPerKm,
     0,
   );
   const avgSecPerKm = totalSeconds / filledRows.length;
@@ -579,11 +595,14 @@ function updateWorkoutSummary() {
 }
 
 function attachWorkoutInputHandlers() {
-  if (workoutPaceInputs.length === 0) return;
+  if (workoutSteps.length === 0) return;
 
   let isNavigatingWithEnter = false;
 
-  workoutPaceInputs.forEach((input) => {
+  workoutSteps.forEach((step) => {
+    const { input } = step;
+    if (!input) return;
+
     input.addEventListener("focus", (event) => {
       if (isNavigatingWithEnter) {
         isNavigatingWithEnter = false;
@@ -591,75 +610,47 @@ function attachWorkoutInputHandlers() {
       }
 
       event.target.value = "";
-      const rowId = Number(event.target.id.split("-").pop());
-      const row = structuredWorkoutRows.find((item) => item.id === rowId);
-      if (row) {
-        row.pace = "";
-        row.speed = "";
-        updateWorkoutRowSpeed(rowId);
-      }
+      resetWorkoutStep(step);
     });
 
     input.addEventListener("input", (event) => {
-      const rowId = Number(event.target.id.split("-").pop());
       const formattedPace = formatPaceInputValue(event.target.value);
       event.target.value = formattedPace;
 
-      const row = structuredWorkoutRows.find((item) => item.id === rowId);
-      if (!row) return;
-
-      row.pace = formattedPace;
-      row.speed = calculateSpeedFromPace(formattedPace);
-      updateWorkoutRowSpeed(rowId);
+      step.secPerKm = parsePaceToSeconds(formattedPace);
+      updateWorkoutRowSpeed(step.id);
     });
 
     input.addEventListener("blur", (event) => {
-      const rowId = Number(event.target.id.split("-").pop());
-      const row = structuredWorkoutRows.find((item) => item.id === rowId);
-      if (!row) return;
-
       if (
         event.target.value &&
         parsePaceToSeconds(event.target.value) === null
       ) {
-        event.target.value = "";
-        row.pace = "";
-        row.speed = "";
-        updateWorkoutRowSpeed(rowId);
+        resetWorkoutStep(step);
       }
     });
 
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        const currentRowId = Number(event.target.id.split("-").pop());
+        const currentRowId = getWorkoutRowId(event.target);
 
         if (
           event.target.value &&
           parsePaceToSeconds(event.target.value) === null
         ) {
-          event.target.value = "";
-          const row = structuredWorkoutRows.find(
-            (item) => item.id === currentRowId,
-          );
-          if (row) {
-            row.pace = "";
-            row.speed = "";
-            updateWorkoutRowSpeed(currentRowId);
-          }
+          resetWorkoutStep(step);
           return;
         }
 
-        if (currentRowId < 4) {
+        if (currentRowId && currentRowId < workoutSteps.length) {
           const nextRowId = currentRowId + 1;
 
           if (nextRowId <= visibleWorkoutRows) {
-            const nextInput = document.getElementById(
-              `page-workout-pace-${nextRowId}`,
-            );
-            if (nextInput) {
+            const nextStep = getWorkoutStep(nextRowId);
+            if (nextStep && nextStep.input) {
               isNavigatingWithEnter = true;
-              nextInput.focus();
+              nextStep.input.focus();
             }
           } else {
             event.target.blur();
@@ -674,7 +665,7 @@ function attachWorkoutInputHandlers() {
   if (!addWorkoutRowButton) return;
 
   addWorkoutRowButton.addEventListener("click", () => {
-    if (visibleWorkoutRows >= 4) return;
+    if (visibleWorkoutRows >= workoutSteps.length) return;
     visibleWorkoutRows += 1;
     updateWorkoutRowVisibility();
   });
@@ -684,9 +675,7 @@ function attachConverterHandlers() {
   const converterInputs = [
     paceInput,
     speedInput,
-    finishTime10kInput,
-    finishTimeHalfInput,
-    finishTimeFullInput,
+    ...finishTimeFields.map(({ input }) => input),
   ];
   converterInputs.forEach((input) =>
     input.addEventListener("focus", handleConverterFocus),
@@ -706,64 +695,27 @@ function attachConverterHandlers() {
   speedInput.addEventListener("blur", handleSpeedBlur);
   speedInput.addEventListener("keydown", handleEnterBlur);
 
-  finishTime10kInput.addEventListener("input", (event) => {
-    event.target.value = formatFinishTimeInputValue(event.target.value);
-    syncFromFinishTime10k();
-  });
-  finishTime10kInput.addEventListener("blur", () => {
-    const updated = normalizeFinishTimeOnBlur(finishTime10kInput, 2);
-    if (
-      finishTime10kInput.value &&
-      parseFinishTimeToSeconds(finishTime10kInput.value) === null
-    ) {
-      finishTime10kInput.value = "";
-      clearConverterFields(finishTime10kInput);
-      return;
-    }
-    if (updated) syncFromFinishTime10k();
-  });
-  finishTime10kInput.addEventListener("keydown", handleEnterBlur);
+  finishTimeFields.forEach(({ input, distanceKm, minDigits }) => {
+    input.addEventListener("input", (event) => {
+      event.target.value = formatFinishTimeInputValue(event.target.value);
+      syncFromFinishTime(input, distanceKm);
+    });
 
-  finishTimeHalfInput.addEventListener("input", (event) => {
-    event.target.value = formatFinishTimeInputValue(event.target.value);
-    syncFromFinishTimeHalf();
-  });
-  finishTimeHalfInput.addEventListener("blur", () => {
-    const updated = normalizeFinishTimeOnBlur(finishTimeHalfInput, 2);
-    if (
-      finishTimeHalfInput.value &&
-      parseFinishTimeToSeconds(finishTimeHalfInput.value) === null
-    ) {
-      finishTimeHalfInput.value = "";
-      clearConverterFields(finishTimeHalfInput);
-      return;
-    }
-    if (updated) syncFromFinishTimeHalf();
-  });
-  finishTimeHalfInput.addEventListener("keydown", handleEnterBlur);
+    input.addEventListener("blur", () => {
+      const updated = normalizeFinishTimeOnBlur(input, minDigits);
+      if (input.value && parseFinishTimeToSeconds(input.value) === null) {
+        input.value = "";
+        clearConverterFields(input);
+        return;
+      }
+      if (updated) syncFromFinishTime(input, distanceKm);
+    });
 
-  finishTimeFullInput.addEventListener("input", (event) => {
-    event.target.value = formatFinishTimeInputValue(event.target.value);
-    syncFromFinishTimeFull();
+    input.addEventListener("keydown", handleEnterBlur);
   });
-  finishTimeFullInput.addEventListener("blur", () => {
-    const updated = normalizeFinishTimeOnBlur(finishTimeFullInput, 3);
-    if (
-      finishTimeFullInput.value &&
-      parseFinishTimeToSeconds(finishTimeFullInput.value) === null
-    ) {
-      finishTimeFullInput.value = "";
-      clearConverterFields(finishTimeFullInput);
-      return;
-    }
-    if (updated) syncFromFinishTimeFull();
-  });
-  finishTimeFullInput.addEventListener("keydown", handleEnterBlur);
 }
 
-attachSwipeHandlers();
-applyPageStyle();
-
+initCarousel();
 attachConverterHandlers();
 attachWorkoutInputHandlers();
 updateWorkoutRowVisibility();
